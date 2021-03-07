@@ -16,6 +16,7 @@ import MessageIcon from '@material-ui/icons/Message';
 import FireIcon from '@material-ui/icons/Whatshot';
 import { CalculatorIcon } from '../../../apps/calculator/components/CalculatorIcon';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import MailIcon from '@material-ui/icons/Mail';
 import { DialerApp } from '../../../apps/dialer/components/DialerApp';
 import { ContactsApp } from '../../../apps/contacts/components/ContactsApp';
 import { CalculatorApp } from '../../../apps/calculator/components/CalculatorApp';
@@ -27,28 +28,38 @@ import { TwitterApp } from '../../../apps/twitter/components/TwitterApp';
 import { ExampleApp } from '../../../apps/example/components/ExampleApp';
 import { MarketplaceApp } from '../../../apps/marketplace/components/MarketplaceApp';
 import { NotesApp } from '../../../apps/notes/NotesApp';
+import { EmailApp } from '../../../apps/email/components/EmailApp';
 import CameraApp from '../../../apps/camera/components/CameraApp';
 import { AppRoute } from '../components/AppRoute';
+
+import { NOTES_APP_ICON_COLOR, NOTES_APP_PRIMARY_COLOR } from '../../../apps/notes/notes.theme';
+
+import { DIALER_APP_PRIMARY_COLOR, DIALER_APP_TEXT_COLOR } from '../../../apps/dialer/dialer.theme';
 
 import {
   MESSAGES_APP_PRIMARY_COLOR,
   MESSAGES_APP_TEXT_COLOR,
 } from '../../../apps/messages/messages.theme';
+
 import {
   CONTACTS_APP_PRIMARY_COLOR,
   CONTACTS_APP_TEXT_COLOR,
 } from '../../../apps/contacts/contacts.theme';
+
 import {
   SELLOUT_APP_PRIMARY_COLOR,
   SELLOUT_APP_ICON_COLOR,
 } from '../../../apps/marketplace/marketplace.theme';
-import { NOTES_APP_ICON_COLOR, NOTES_APP_PRIMARY_COLOR } from '../../../apps/notes/notes.theme';
-import { DIALER_APP_PRIMARY_COLOR, DIALER_APP_TEXT_COLOR } from '../../../apps/dialer/dialer.theme';
 import {
   TWITTER_APP_PRIMARY_COLOR,
   TWITTER_APP_TEXT_COLOR,
 } from '../../../apps/twitter/twitter.theme';
 import { MATCH_APP_PRIMARY_COLOR, MATCH_APP_TEXT_COLOR } from '../../../apps/match/match.theme';
+
+import {
+  EMAIL_APP_DEFAULT_PRIMARY_COLOR,
+  EMAIL_APP_DEFAULT_TEXT_COLOR,
+} from '../../../apps/email/email.theme';
 
 export interface IAppConfig {
   id: string;
@@ -172,6 +183,16 @@ export const APPS: IAppConfig[] = [
     color: common.white,
     path: '/camera',
     Route: () => <AppRoute id="CAMERA" path="/camera" component={CameraApp} />,
+  },
+  {
+    id: 'EMAIL',
+    nameLocale: 'APPS_EMAIL',
+    icon: <MailIcon fontSize="large" />,
+    notificationIcon: <MailIcon fontSize="small" />,
+    backgroundColor: EMAIL_APP_DEFAULT_PRIMARY_COLOR,
+    color: EMAIL_APP_DEFAULT_TEXT_COLOR,
+    path: '/email',
+    Route: () => <AppRoute id="EMAIL" path="/email" component={EmailApp} />,
   },
 ];
 

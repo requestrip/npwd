@@ -52,16 +52,23 @@ const useStyles = makeStyles((theme) => ({
 interface IProps {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   value: string;
+  autoFocus?: boolean;
   placeholder?: string;
 }
 
 const DEFAULT_PROPS = {
   onChange: () => {},
   value: '',
+  autoFocus: false,
   placeholder: 'Search...',
 };
 
-export const SearchField = ({ value, onChange, placeholder }: IProps = DEFAULT_PROPS) => {
+export const SearchField = ({
+  value,
+  onChange,
+  placeholder,
+  autoFocus,
+}: IProps = DEFAULT_PROPS) => {
   const classes = useStyles();
   return (
     <Paper elevation={24} variant="outlined" className={classes.bg}>
@@ -72,6 +79,7 @@ export const SearchField = ({ value, onChange, placeholder }: IProps = DEFAULT_P
         <InputBase
           value={value}
           onChange={onChange}
+          autoFocus={autoFocus}
           placeholder={placeholder}
           classes={{
             root: classes.inputRoot,
