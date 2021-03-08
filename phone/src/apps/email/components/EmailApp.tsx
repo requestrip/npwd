@@ -1,4 +1,3 @@
-import { Box, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { AppWrapper } from '../../../ui/components';
 import { AppContent } from '../../../ui/components/AppContent';
@@ -7,6 +6,7 @@ import EmailNavBar from './EmailNavBar';
 import { Route, Switch } from 'react-router-dom';
 import { InboxPage } from './InboxPage';
 import { EmailAppHeader } from './EmailAppHeader';
+import { NewEmailPage } from './NewEmailPage';
 
 export const EmailApp = () => {
   return (
@@ -17,6 +17,9 @@ export const EmailApp = () => {
           <Switch>
             <Route path="/email" exact>
               <InboxPage />
+            </Route>
+            <Route path="/email/new" exact>
+              <NewEmailPage />
             </Route>
           </Switch>
         </AppContent>

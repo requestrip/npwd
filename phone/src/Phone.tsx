@@ -33,6 +33,7 @@ import { usePhone } from './os/phone/hooks/usePhone';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from './ui/hooks/useSnackbar';
 import { isDefaultWallpaper } from './apps/settings/utils/isDefaultWallpaper';
+import { useEmailService } from './apps/email/hooks/useEmailService';
 
 function Phone() {
   const { t, i18n } = useTranslation();
@@ -74,6 +75,7 @@ function Phone() {
   usePhotoService();
   useCallService();
   useDialService();
+  useEmailService();
 
   const { modal: callModal } = useCallModal();
   const { bottom, visibility } = usePhoneVisibility();

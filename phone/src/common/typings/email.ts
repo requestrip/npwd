@@ -10,11 +10,12 @@ export interface IEmailExternalAction {
 
 export interface IEmail {
   id: number;
+  isRead: boolean;
   receivers: string[];
   sender: string;
   sendDate: number;
   subject: string;
   body: string;
-  phoneActions: Array<IEmailPhoneAction>;
-  externalActions: Array<IEmailExternalAction>;
+  phoneActions?: Array<IEmailPhoneAction>;
+  externalActions?: Array<IEmailExternalAction>;
 }
