@@ -5,88 +5,125 @@ import { useNuiEvent } from '../../../os/nui-events/hooks/useNuiEvent';
 import { emailState } from './state';
 
 export const useEmailService = () => {
-  const setEmails = useSetRecoilState(emailState.emails);
+  const setInbox = useSetRecoilState(emailState.inbox);
+  const setSent = useSetRecoilState(emailState.sent);
+  const setMyEmail = useSetRecoilState(emailState.myEmail);
 
-  useNuiEvent('EMAIL', 'phone:fetchAllEmailsSuccess', setEmails);
+  useNuiEvent('EMAIL', 'phone:setMyEmail', setMyEmail);
+  useNuiEvent('EMAIL', 'phone:fetchAllSentEmailsSuccess', setSent);
+  useNuiEvent('EMAIL', 'phone:fetchAllEmailsSuccess', setInbox);
 };
 
-InjectDebugData<IEmail[]>([
+InjectDebugData<string>([
   {
     app: 'EMAIL',
-    method: 'phone:fetchAllEmailsSuccess',
-    data: [
-      {
-        id: 1,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: false,
-      },
-      {
-        id: 2,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: false,
-      },
-      {
-        id: 3,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: true,
-      },
-      {
-        id: 4,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'chip@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: true,
-      },
-      {
-        id: 5,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'taso@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: true,
-      },
-      {
-        id: 6,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: false,
-      },
-      {
-        id: 7,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: false,
-      },
-      {
-        id: 8,
-        subject: 'Try this great app!',
-        body: 'Hey did you try this email app? Looking good bruh',
-        receivers: ['rocky@projecterror.org'],
-        sender: 'kidz@projecterror.org',
-        sendDate: Date.now() / 1000,
-        isRead: false,
-      },
-    ],
+    method: 'phone:setMyEmail',
+    data: 'rocky@projecterror.org',
   },
 ]);
+
+InjectDebugData<IEmail[]>(
+  [
+    {
+      app: 'EMAIL',
+      method: 'phone:fetchAllSentEmailsSuccess',
+      data: [
+        {
+          id: 1,
+          subject: 'Hey!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['kidz@projecterror.dev'],
+          sender: 'rocky@projecterror.org',
+          sendDate: Date.now() / 1000,
+        },
+        {
+          id: 2,
+          subject: 'What is up?',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['kidz@projecterror.dev'],
+          sender: 'rocky@projecterror.org',
+          sendDate: Date.now() / 1000,
+        },
+      ],
+    },
+    {
+      app: 'EMAIL',
+      method: 'phone:fetchAllEmailsSuccess',
+      data: [
+        {
+          id: 1,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: false,
+        },
+        {
+          id: 2,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: false,
+        },
+        {
+          id: 3,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: true,
+        },
+        {
+          id: 4,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'chip@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: true,
+        },
+        {
+          id: 5,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'taso@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: true,
+        },
+        {
+          id: 6,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: false,
+        },
+        {
+          id: 7,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: false,
+        },
+        {
+          id: 8,
+          subject: 'Try this great app!',
+          body: 'Hey did you try this email app? Looking good bruh',
+          receivers: ['rocky@projecterror.org'],
+          sender: 'kidz@projecterror.dev',
+          sendDate: Date.now() / 1000,
+          isRead: false,
+        },
+      ],
+    },
+  ],
+  2500,
+);

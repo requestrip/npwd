@@ -221,7 +221,14 @@
     "APPS_MARKETPLACE_FORM_IMAGE": "Image or URL",
     "APPS_MARKETPLACE_FORM_DESCRIPTION": "Description",
 
+    "APPS_EMAIL_INBOX": "Inbox",
+    "APPS_EMAIL_SENT": "Sent",
+    "APPS_EMAIL_SUBJECT": "Subject",
+
     "GENERIC_CLICK_TO_REVEAL": "Click to reveal",
+    "GENERIC_NEW": "New",
+    "GENERIC_FROM": "From",
+    "GENERIC_TO": "To",
     "GENERIC_WAIT": "Please wait...",
     "GENERIC_SAVE": "Save",
     "GENERIC_UPDATE": "Update",

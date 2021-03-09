@@ -2,8 +2,16 @@ import { atom } from 'recoil';
 import { IEmail } from '../../../common/typings/email';
 
 export const emailState = {
-  emails: atom<IEmail[]>({
+  inbox: atom<IEmail[]>({
     default: null,
-    key: 'EMAIL:emails',
+    key: 'EMAIL:inbox',
+  }),
+  sent: atom<IEmail[]>({
+    default: null,
+    key: 'EMAIL:sent',
+  }),
+  myEmail: atom<string>({
+    default: null,
+    key: 'EMAIL:myEmail',
   }),
 };

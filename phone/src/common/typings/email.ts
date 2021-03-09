@@ -10,7 +10,7 @@ export interface IEmailExternalAction {
 
 export interface IEmail {
   id: number;
-  isRead: boolean;
+  isRead?: boolean;
   receivers: string[];
   sender: string;
   sendDate: number;

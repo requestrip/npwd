@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 export const InboxPage = () => {
   const classes = useStyles();
 
-  const { emails } = useEmail();
+  const { inbox } = useEmail();
   const { autoSearch } = useQueryParams<{ autoSearch }>();
 
   const [search, setSearch] = useState<string>('');
@@ -37,7 +37,7 @@ export const InboxPage = () => {
         />
       </Box>
       <Box overflow="auto" maxHeight="100%">
-        <EmailList emails={emails} />
+        <EmailList emails={inbox} />
       </Box>
     </Box>
   );
