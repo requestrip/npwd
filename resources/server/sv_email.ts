@@ -23,28 +23,28 @@ export interface UnformattedEmailMessage {
 async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]> {
   const query = `
     SELECT
-      npwd_emails.subject,
-      npwd_emails_messages.id as message_id,
       npwd_emails_messages.parent_id,
       npwd_emails_messages.email_id,
       npwd_emails_messages.sender,
       npwd_emails_messages.sender_identifier,
       npwd_emails_messages.send_date,
       npwd_emails_messages.body,
-      npwd_emails_receivers.id,
-      npwd_emails_receivers.read_at,
+      npwd_emails_receivers.message_id,
       npwd_emails_receivers.receiver,
-      npwd_emails_receivers.receiver_identifier
+      npwd_emails_receivers.receiver_identifier,
+      npwd_emails_receivers.read_at,
+      subject
     FROM (
-      SELECT id, message_id FROM npwd_emails_receivers WHERE npwd_emails_receivers.receiver_identifier = ? OR npwd_emails_receivers.receiver_identifier
-    ) as er
-    LEFT OUTER JOIN npwd_emails_messages ON npwd_emails_messages.id = er.message_id
+      SELECT id, subject FROM npwd_emails
+    ) as e
+
+    LEFT OUTER JOIN npwd_emails_messages ON npwd_emails_messages.email_id = e.id
     LEFT OUTER JOIN npwd_emails_receivers ON npwd_emails_receivers.message_id = npwd_emails_messages.id
-    LEFT OUTER JOIN npwd_emails ON npwd_emails.id = npwd_emails_messages.email_id
+    WHERE npwd_emails_receivers.receiver_identifier = ? OR npwd_emails_messages.sender_identifier = ?
     ORDER BY npwd_emails_messages.send_date DESC
   `;
 
-  const result = await pool.query(query, [identifier]);
+  const result = await pool.query(query, [identifier, identifier]);
 
   return result[0] as UnformattedEmailMessage[];
 }
