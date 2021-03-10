@@ -1,11 +1,26 @@
 import events from '../utils/events';
 import { mainLogger } from './sv_logger';
 import { getSource } from './functions';
+import { IEmail, IEmailMessage } from '../../phone/src/common/typings/email';
 import { pool } from './db';
 
 const emailLogger = mainLogger.child({ module: 'contact' });
 
-async function fetchInbox(identifier: string): Promise<any> {
+export interface UnformattedEmailMessage {
+  message_id: number;
+  parent_id?: number | null;
+  email_id: number;
+  read_at: number | null;
+  subject: string;
+  sender: string;
+  sender_identifier: string;
+  receiver: string;
+  receiver_identifier: string;
+  send_date: number;
+  body: string;
+}
+
+async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]> {
   const query = `
     SELECT
       npwd_emails.subject,
@@ -27,15 +42,51 @@ async function fetchInbox(identifier: string): Promise<any> {
     WHERE npwd_emails_receivers.receiver_identifier = ?
     ORDER BY npwd_emails_messages.send_date DESC
   `;
+
   const result = await pool.query(query, [identifier]);
-  return result[0];
+
+  return result[0] as UnformattedEmailMessage[];
+}
+
+function formatMessage(message: UnformattedEmailMessage, myEmail: string): IEmailMessage {
+  return {
+    body: message.body,
+    emailId: message.email_id,
+    id: message.message_id,
+    receivers: [message.receiver],
+    sendDate: message.send_date,
+    sender: message.sender,
+    isMine: message.sender === myEmail,
+    isRead: !!message.read_at,
+  };
+}
+
+function getEmailsFromMessages(messages: UnformattedEmailMessage[], myEmail: string): IEmail[] {
+  const map = messages.reduce((emails, message) => {
+    if (emails.has(message.email_id)) {
+      emails.set(message.email_id, {
+        ...emails.get(message.email_id),
+        messages: [...emails.get(message.email_id).messages, formatMessage(message, myEmail)],
+      });
+      return emails;
+    }
+    emails.set(message.email_id, {
+      id: message.email_id,
+      messages: [formatMessage(message, myEmail)],
+      subject: message.subject,
+    });
+    return emails;
+  }, new Map<number, IEmail>());
+
+  return Array.from(map.values());
 }
 
 onNet(events.EMAIL_FETCH_INBOX, async () => {
   const _source = getSource();
   try {
     const email = 'kidz@projecterror.dev';
-    const inbox = await fetchInbox(email);
+    const messages = await fetchInbox(email);
+    const inbox = getEmailsFromMessages(messages, email);
     emitNet(events.EMAIL_FETCH_INBOX_SUCCESS, inbox);
   } catch (e) {
     emailLogger.error(`Failed to fetch email inbox, ${e.message}`, {
