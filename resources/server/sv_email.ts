@@ -20,6 +20,24 @@ export interface UnformattedEmailMessage {
   body: string;
 }
 
+/***
+ * 
+SELECT 
+      npwd_emails_external_actions.label as action_ext_label,
+      npwd_emails_external_actions.close_phone as action_ext_close_phone,
+      npwd_emails_external_actions.delete_email as action_ext_delete_email,
+      npwd_emails_external_actions.event_name as action_ext_event_name,
+      npwd_emails_external_actions.event_arg as action_ext_event_arg,
+FROM npwd_emails_external_actions;
+
+SELECT
+      npwd_emails_phone_actions.label as action_phone_label,
+      npwd_emails_phone_actions.close_phone as action_phone_close_phone,
+      npwd_emails_phone_actions.delete_email as action_phone_delete_email,
+      npwd_emails_phone_actions.href as action_phone_href
+FROM npwd_emails_phone_actions;
+ */
+
 async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]> {
   const query = `
     SELECT
@@ -37,7 +55,6 @@ async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]
     FROM (
       SELECT id, subject FROM npwd_emails
     ) as e
-
     LEFT OUTER JOIN npwd_emails_messages ON npwd_emails_messages.email_id = e.id
     LEFT OUTER JOIN npwd_emails_receivers ON npwd_emails_receivers.message_id = npwd_emails_messages.id
     WHERE npwd_emails_receivers.receiver_identifier = ? OR npwd_emails_messages.sender_identifier = ?
