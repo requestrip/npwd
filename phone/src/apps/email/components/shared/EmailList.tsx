@@ -1,5 +1,5 @@
 import React from 'react';
-import { IEmail } from '../../../common/typings/email';
+import { IEmail } from '../../../../common/typings/email';
 import { EmailListItem } from './EmailListItem';
 import { List } from '@material-ui/core';
 
@@ -8,5 +8,7 @@ interface IProps {
 }
 
 export const EmailList = ({ emails }: IProps) => {
-  return <List>{emails && emails.map((email) => <EmailListItem email={email} />)}</List>;
+  return (
+    <List>{emails && emails.map((email) => <EmailListItem key={email.id} email={email} />)}</List>
+  );
 };

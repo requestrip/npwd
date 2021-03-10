@@ -2,6 +2,14 @@ import { atom } from 'recoil';
 import { IEmail } from '../../../common/typings/email';
 
 export const emailState = {
+  search: atom<IEmail[]>({
+    default: null,
+    key: 'EMAIL:search',
+  }),
+  searchTerm: atom<string>({
+    default: null,
+    key: 'EMAIL:searchTerm',
+  }),
   inbox: atom<IEmail[]>({
     default: null,
     key: 'EMAIL:inbox',

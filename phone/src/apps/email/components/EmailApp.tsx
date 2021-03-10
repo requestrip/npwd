@@ -2,13 +2,13 @@ import React from 'react';
 import { AppWrapper } from '../../../ui/components';
 import { AppContent } from '../../../ui/components/AppContent';
 import { EmailThemeProvider } from '../providers/EmailThemeProvider';
-import EmailNavBar from './EmailNavBar';
+import { EmailAppNav } from './EmailAppNav';
 import { Route, Switch } from 'react-router-dom';
-import { InboxPage } from './InboxPage';
+import { InboxPage } from './pages/InboxPage';
 import { EmailAppHeader } from './EmailAppHeader';
-import { NewEmailPage } from './NewEmailPage';
-import { SentPage } from './SentPage';
-import { EmailDetails } from './EmailDetails';
+import { NewEmailPage } from './pages/NewEmailPage';
+import { SentPage } from './pages/SentPage';
+import { EmailDetailsPage } from './pages/EmailDetailsPage';
 
 export const EmailApp = () => {
   return (
@@ -27,11 +27,11 @@ export const EmailApp = () => {
               <NewEmailPage />
             </Route>
             <Route path="/email/details/:id">
-              <EmailDetails />
+              <EmailDetailsPage />
             </Route>
           </Switch>
         </AppContent>
-        <EmailNavBar />
+        <EmailAppNav />
       </AppWrapper>
     </EmailThemeProvider>
   );

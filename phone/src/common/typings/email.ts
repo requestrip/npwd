@@ -8,14 +8,22 @@ export interface IEmailExternalAction {
   closePhone?: boolean;
 }
 
-export interface IEmail {
+export interface IEmailMessage {
   id: number;
+  parentId?: number | null;
+  emailId: number;
   isRead?: boolean;
+  isMine?: boolean;
   receivers: string[];
   sender: string;
   sendDate: number;
   subject: string;
   body: string;
+}
+
+export interface IEmail {
+  id: number;
+  messages: IEmailMessage[];
   phoneActions?: Array<IEmailPhoneAction>;
   externalActions?: Array<IEmailExternalAction>;
 }

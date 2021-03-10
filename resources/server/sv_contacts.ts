@@ -3,8 +3,6 @@ import { getIdentifier, getSource } from './functions';
 import { mainLogger } from './sv_logger';
 import { ContactEvents } from '../../typings/contact';
 
-const contactsLogger = mainLogger.child({ module: 'contact' });
-
 interface Contacts {
   id?: number;
   display: string;

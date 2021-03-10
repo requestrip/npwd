@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@material-ui/core';
-import { useEmail } from '../hooks/useEmail';
-import { EmailList } from './EmailList';
+import { useEmail } from '../../hooks/useEmail';
+import { EmailList } from '../shared/EmailList';
 
 export const SentPage = () => {
   const { sent } = useEmail();

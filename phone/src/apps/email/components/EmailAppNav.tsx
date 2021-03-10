@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const EmailNavBar = () => {
+export const EmailAppNav = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
   const [page, setPage] = useState(pathname);
@@ -58,5 +58,3 @@ const EmailNavBar = () => {
     </BottomNavigation>
   );
 };
-
-export default EmailNavBar;
