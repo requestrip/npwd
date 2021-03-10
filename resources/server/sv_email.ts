@@ -24,6 +24,7 @@ async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]
   const query = `
     SELECT
       npwd_emails.subject,
+      npwd_emails_messages.id as message_id,
       npwd_emails_messages.parent_id,
       npwd_emails_messages.email_id,
       npwd_emails_messages.sender,
@@ -31,10 +32,11 @@ async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]
       npwd_emails_messages.send_date,
       npwd_emails_messages.body,
       npwd_emails_receivers.id,
+      npwd_emails_receivers.read_at,
       npwd_emails_receivers.receiver,
       npwd_emails_receivers.receiver_identifier
     FROM (
-      SELECT id, read_at, message_id FROM npwd_emails_receivers WHERE npwd_emails_receivers.receiver_identifier = ?
+      SELECT id, message_id FROM npwd_emails_receivers WHERE npwd_emails_receivers.receiver_identifier = ? OR npwd_emails_receivers.receiver_identifier
     ) as er
     LEFT OUTER JOIN npwd_emails_messages ON npwd_emails_messages.id = er.message_id
     LEFT OUTER JOIN npwd_emails_receivers ON npwd_emails_receivers.message_id = npwd_emails_messages.id
@@ -56,7 +58,7 @@ function formatMessage(message: UnformattedEmailMessage, myEmail: string): IEmai
     sendDate: message.send_date,
     sender: message.sender,
     isMine: message.sender === myEmail,
-    isRead: !!message.read_at,
+    isRead: message.receiver === myEmail ? !!message.read_at : null,
   };
 }
 
@@ -66,6 +68,9 @@ function getEmailsFromMessages(messages: UnformattedEmailMessage[], myEmail: str
       const email = emails.get(message.email_id);
       if (email.messagesMap.has(message.message_id)) {
         const currentMessage = email.messagesMap.get(message.message_id);
+        if (message.receiver === myEmail && !currentMessage.isRead) {
+          currentMessage.isRead === !!message.read_at;
+        }
         email.messagesMap.set(message.message_id, {
           ...currentMessage,
           receivers: [...currentMessage.receivers, message.receiver_identifier],
