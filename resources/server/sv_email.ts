@@ -39,7 +39,6 @@ async function fetchInbox(identifier: string): Promise<UnformattedEmailMessage[]
     LEFT OUTER JOIN npwd_emails_messages ON npwd_emails_messages.id = er.message_id
     LEFT OUTER JOIN npwd_emails_receivers ON npwd_emails_receivers.message_id = npwd_emails_messages.id
     LEFT OUTER JOIN npwd_emails ON npwd_emails.id = npwd_emails_messages.email_id
-    WHERE npwd_emails_receivers.receiver_identifier = ?
     ORDER BY npwd_emails_messages.send_date DESC
   `;
 
@@ -64,21 +63,34 @@ function formatMessage(message: UnformattedEmailMessage, myEmail: string): IEmai
 function getEmailsFromMessages(messages: UnformattedEmailMessage[], myEmail: string): IEmail[] {
   const map = messages.reduce((emails, message) => {
     if (emails.has(message.email_id)) {
+      const email = emails.get(message.email_id);
+      if (email.messagesMap.has(message.message_id)) {
+        const currentMessage = email.messagesMap.get(message.message_id);
+        email.messagesMap.set(message.message_id, {
+          ...currentMessage,
+          receivers: [...currentMessage.receivers, message.receiver_identifier],
+        });
+      } else {
+        email.messagesMap.set(message.message_id, formatMessage(message, myEmail));
+      }
       emails.set(message.email_id, {
-        ...emails.get(message.email_id),
-        messages: [...emails.get(message.email_id).messages, formatMessage(message, myEmail)],
+        ...email,
+        messages: Array.from(email.messagesMap.values()),
       });
       return emails;
     }
+    const messagesMap = new Map<number, IEmailMessage>();
+    messagesMap.set(message.message_id, formatMessage(message, myEmail));
     emails.set(message.email_id, {
       id: message.email_id,
-      messages: [formatMessage(message, myEmail)],
+      messagesMap,
+      messages: Array.from(messagesMap.values()),
       subject: message.subject,
     });
     return emails;
-  }, new Map<number, IEmail>());
+  }, new Map<number, IEmail & { messagesMap: Map<number, IEmailMessage> }>());
 
-  return Array.from(map.values());
+  return Array.from(map.values()).map((m) => ({ ...m, messagesMap: undefined }));
 }
 
 onNet(events.EMAIL_FETCH_INBOX, async () => {
