@@ -17,13 +17,13 @@ export interface IEmailMessage {
   receivers: string[];
   sender: string;
   sendDate: number;
-  subject: string;
   body: string;
+  phoneActions?: Array<IEmailPhoneAction>;
+  externalActions?: Array<IEmailExternalAction>;
 }
 
 export interface IEmail {
   id: number;
+  subject: string;
   messages: IEmailMessage[];
-  phoneActions?: Array<IEmailPhoneAction>;
-  externalActions?: Array<IEmailExternalAction>;
 }

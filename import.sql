@@ -172,3 +172,50 @@ CREATE TABLE IF NOT EXISTS npwd_phone_gallery (
   `image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS npwd_emails (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  subject varchar(80) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS npwd_emails_messages (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  parent_id int(11) DEFAULT NULL,
+  email_id int(11) NOT NULL,
+  sender varchar(255) NOT NULL,
+  sender_identifier varchar(255),
+  send_date int(11) NOT NULL,
+  body TEXT,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS npwd_emails_receivers (
+  id int(12) NOT NULL AUTO_INCREMENT,
+  message_id int(11) NOT NULL,
+  receiver varchar(255) NOT NULL,
+  receiver_identifier varchar(255) NOT NULL,
+  read_at int(11) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS npwd_emails_phone_actions (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  message_id int(11) NOT NULL,
+  label varchar(255) NOT NULL,
+  close_phone int(1) DEFAULT 0,
+  delete_email int(1) DEFAULT 1,
+  href text NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS npwd_emails_external_actions (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  message_id int(11) NOT NULL,
+  label varchar(255) NOT NULL,
+  close_phone int(1) DEFAULT 0,
+  delete_email int(1) DEFAULT 1,
+  event_name varchar(255) NOT NULL,
+  event_arg text,
+  PRIMARY KEY (id)
+);
