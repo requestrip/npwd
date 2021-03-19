@@ -1,4 +1,5 @@
 export default {
+  EMAIL: 'EMAIL',
   TWITTER: 'TWITTER',
   MATCH: 'MATCH',
   MESSAGES: 'MESSAGES',

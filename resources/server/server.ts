@@ -11,6 +11,7 @@ import './sv_photo';
 import './sv_messages';
 import './sv_match';
 import './sv_call';
+import './sv_email';
 import './players/sv_player_events';
 import { mainLogger } from './sv_logger';
 

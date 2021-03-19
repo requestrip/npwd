@@ -37,3 +37,7 @@ export function sendCameraEvent(method: string, data: any = {}) {
 export function sendMatchEvent(method: string, data: any = {}) {
   return sendMessage(apps.MATCH, method, data);
 }
+
+export function sendEmailEvent(method: string, data: any = {}) {
+  sendMessage(apps.EMAIL, method, data);
+}

@@ -11,7 +11,7 @@ export const useEmail = () => {
 
   const [fetchInbox, { loading: inboxLoading }] = useNuiEventCallback(
     'EMAIL',
-    'phone:fetchEmails',
+    'phone:fetchInbox',
     setInbox,
   );
   const [fetchSent, { loading: sentLoading }] = useNuiEventCallback(

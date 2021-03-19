@@ -1,4 +1,5 @@
 import { uuidv4 } from '../utils/fivem';
+import { sendMessage } from '../utils/messages';
 
 interface ISettings {
   promiseTimeout: number;
@@ -59,51 +60,43 @@ export default class ClientUtils {
     });
   }
 
-  public registerNuiServerCallback<I = any, R = any>(event: string) {
-    RegisterNuiCallbackType(event);
-
+  public registerNuiServerCallback<I = any, R = any>(
+    app: string,
+    event: string,
+    successEvent?: string,
+    errorEvent?: string,
+  ) {
     const uid = uuidv4();
     const callbackId = `${event}:${uid}`;
 
+    RegisterNuiCallbackType(event);
     on(`__cfx_nui:${event}`, (data: I, cb: (err: any, data?: R) => void) => {
       if (this._callbacks.has(callbackId)) {
         cb(new Error(`Nui Server Callback with name "${event}" is already waiting for server!`));
         return;
       }
       emitNet(event, data);
-
-      this._callbacks.set(callbackId, {
-        cb,
-        timeout: setTimeout(() => {
-          if (this._callbacks.has(callbackId)) {
-            this._callbacks
-              .get(callbackId)
-              .cb(
-                new Error(
-                  `Nui Server Callback with name "${event}" timed out after ${this._settings.promiseTimeout}ms`,
-                ),
-              );
-            this._callbacks.delete(callbackId);
-          }
-        }, this._settings.promiseTimeout),
-      });
     });
 
-    onNet(`${event}Success`, (response: R) => {
+    const _success = successEvent || `${event}Success`;
+    onNet(_success, (response: R) => {
       if (this._callbacks.has(callbackId)) {
         const callback = this._callbacks.get(callbackId);
         clearTimeout(callback.timeout);
         callback.cb(null, response);
         this._callbacks.delete(callbackId);
+        sendMessage(app, _success, response);
       }
     });
 
-    onNet(`${event}Error`, (err: any) => {
+    const _error = errorEvent || `${event}Error`;
+    onNet(_error, (err: any) => {
       if (this._callbacks.has(callbackId)) {
         const callback = this._callbacks.get(callbackId);
         clearTimeout(callback.timeout);
         callback.cb(err);
         this._callbacks.delete(callbackId);
+        sendMessage(app, _error, err);
       }
     });
   }

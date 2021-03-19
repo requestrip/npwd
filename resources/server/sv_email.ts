@@ -120,12 +120,13 @@ onNet(events.EMAIL_FETCH_INBOX, async () => {
   try {
     const email = 'kidz@projecterror.dev';
     const messages = await fetchInbox(email);
+    await new Promise((res) => setTimeout(res, 6000));
     const inbox = getEmailsFromMessages(messages, email);
-    emitNet(events.EMAIL_FETCH_INBOX_SUCCESS, inbox);
+    emitNet(events.EMAIL_FETCH_INBOX_SUCCESS, _source, inbox);
   } catch (e) {
     emailLogger.error(`Failed to fetch email inbox, ${e.message}`, {
       source: _source,
     });
-    emitNet(events.EMAIL_FETCH_INBOX_ERROR, e);
+    emitNet(events.EMAIL_FETCH_INBOX_ERROR, _source, e);
   }
 });
