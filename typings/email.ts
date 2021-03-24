@@ -27,3 +27,20 @@ export interface IEmail {
   subject: string;
   messages: IEmailMessage[];
 }
+
+export interface EmailMessageInput {
+  email_id?: number;
+  subject?: string;
+  parent_id?: number;
+  body: string;
+  receivers: string;
+}
+
+export enum EmailEvents {
+  FETCH_INBOX = 'npwd:fetchEmailInbox',
+  FETCH_INBOX_SUCCESS = 'npwd:fetchEmailInboxSuccess',
+  FETCH_INBOX_ERROR = 'npwd:fetchEmailInboxError',
+  SEND_EMAIL = 'npwd:sendEmail',
+  SEND_EMAIL_SUCCESS = 'npwd:sendEmailSuccess',
+  SEND_EMAIL_ERROR = 'npwd:sendEmailError',
+}

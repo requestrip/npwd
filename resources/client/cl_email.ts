@@ -1,66 +1,110 @@
-import { ClUtils } from './client';
-import events from '../utils/events';
 import { uuidv4 } from 'fivem-js';
 import { sendEmailEvent } from '../utils/messages';
-import apps from '../utils/apps';
-
-// ClUtils.registerNuiServerCallback(apps.EMAIL, events.EMAIL_FETCH_INBOX);
-
-/* RegisterNuiCallbackType(events.EMAIL_FETCH_INBOX);
-on(`__cfx_nui:${events.EMAIL_FETCH_INBOX}`, (data: any, cb: any) => {
-  console.log('wtf', data);
-  cb([]);
-});
- */
+import { EmailEvents, EmailMessageInput, IEmailMessage } from '../../typings/email';
 
 interface ICallback {
   cb: (err: any, data?: unknown) => void;
   timeout: NodeJS.Timeout;
 }
 
-const event = events.EMAIL_FETCH_INBOX;
+const _timeout = 10000;
 const _callbacks = new Map<string, ICallback>();
 
-const uid = uuidv4();
-const callbackId = `${event}:${uid}`;
-
-RegisterNuiCallbackType(event);
-on(`__cfx_nui:${event}`, (data: any, cb: (err: any, data?: any) => void) => {
-  if (_callbacks.has(callbackId)) {
-    cb(new Error(`Nui Server Callback with name "${event}" is already waiting for server!`));
+/**
+ * Fetch Inbox
+ */
+RegisterNuiCallbackType(EmailEvents.FETCH_INBOX);
+on(`__cfx_nui:${EmailEvents.FETCH_INBOX}`, (data: any, cb: (err: any, data?: any) => void) => {
+  if (_callbacks.has(EmailEvents.FETCH_INBOX)) {
+    cb(
+      new Error(
+        `Nui Server Callback with name "${EmailEvents.FETCH_INBOX}" is already waiting for server!`,
+      ),
+    );
     return;
   }
-  emitNet(event, data);
+  emitNet(EmailEvents.FETCH_INBOX, data);
 
-  _callbacks.set(callbackId, {
+  _callbacks.set(EmailEvents.FETCH_INBOX, {
     cb,
     timeout: setTimeout(() => {
-      if (_callbacks.has(callbackId)) {
+      if (_callbacks.has(EmailEvents.FETCH_INBOX)) {
         _callbacks
-          .get(callbackId)
-          .cb(new Error(`Nui Server Callback with name "${event}" timed out`));
-        _callbacks.delete(callbackId);
+          .get(EmailEvents.FETCH_INBOX)
+          .cb(new Error(`Nui Server Callback with name "${EmailEvents.FETCH_INBOX}" timed out`));
+        _callbacks.delete(EmailEvents.FETCH_INBOX);
       }
-    }, 20000),
+    }, _timeout),
   });
 });
 
-onNet(`${event}Success`, (response: any) => {
-  if (_callbacks.has(callbackId)) {
-    const callback = _callbacks.get(callbackId);
+onNet(EmailEvents.FETCH_INBOX_SUCCESS, (response: any) => {
+  if (_callbacks.has(EmailEvents.FETCH_INBOX)) {
+    const callback = _callbacks.get(EmailEvents.FETCH_INBOX);
     clearTimeout(callback.timeout);
     callback.cb(null, response);
-    _callbacks.delete(callbackId);
-    sendEmailEvent(`${event}Success`, response);
+    _callbacks.delete(EmailEvents.FETCH_INBOX);
+    sendEmailEvent(EmailEvents.FETCH_INBOX_SUCCESS, response);
   }
 });
 
-onNet(`${event}Error`, (err: any) => {
-  if (_callbacks.has(callbackId)) {
-    const callback = _callbacks.get(callbackId);
+onNet(EmailEvents.FETCH_INBOX_ERROR, (err: any) => {
+  if (_callbacks.has(EmailEvents.FETCH_INBOX)) {
+    const callback = _callbacks.get(EmailEvents.FETCH_INBOX);
     clearTimeout(callback.timeout);
     callback.cb(err);
-    _callbacks.delete(callbackId);
-    sendEmailEvent(`${event}Error`, err);
+    _callbacks.delete(EmailEvents.FETCH_INBOX);
+    sendEmailEvent(EmailEvents.FETCH_INBOX_ERROR, err);
+  }
+});
+
+/**
+ * Send Email
+ */
+RegisterNuiCallbackType(EmailEvents.SEND_EMAIL);
+on(
+  `__cfx_nui:${EmailEvents.SEND_EMAIL}`,
+  (data: EmailMessageInput, cb: (err: any, data?: IEmailMessage) => void) => {
+    if (_callbacks.has(EmailEvents.SEND_EMAIL)) {
+      cb(
+        new Error(
+          `Nui Server Callback with name "${EmailEvents.SEND_EMAIL}" is already waiting for server!`,
+        ),
+      );
+      return;
+    }
+    emitNet(EmailEvents.SEND_EMAIL, data);
+
+    _callbacks.set(EmailEvents.SEND_EMAIL, {
+      cb,
+      timeout: setTimeout(() => {
+        if (_callbacks.has(EmailEvents.SEND_EMAIL)) {
+          _callbacks
+            .get(EmailEvents.SEND_EMAIL)
+            .cb(new Error(`Nui Server Callback with name "${EmailEvents.SEND_EMAIL}" timed out`));
+          _callbacks.delete(EmailEvents.SEND_EMAIL);
+        }
+      }, _timeout),
+    });
+  },
+);
+
+onNet(EmailEvents.SEND_EMAIL_SUCCESS, (response: any) => {
+  if (_callbacks.has(EmailEvents.SEND_EMAIL)) {
+    const callback = _callbacks.get(EmailEvents.SEND_EMAIL);
+    clearTimeout(callback.timeout);
+    callback.cb(null, response);
+    _callbacks.delete(EmailEvents.SEND_EMAIL);
+    sendEmailEvent(EmailEvents.SEND_EMAIL_SUCCESS, response);
+  }
+});
+
+onNet(EmailEvents.SEND_EMAIL_ERROR, (err: any) => {
+  if (_callbacks.has(EmailEvents.SEND_EMAIL)) {
+    const callback = _callbacks.get(EmailEvents.SEND_EMAIL);
+    clearTimeout(callback.timeout);
+    callback.cb(err);
+    _callbacks.delete(EmailEvents.SEND_EMAIL);
+    sendEmailEvent(EmailEvents.SEND_EMAIL_ERROR, err);
   }
 });

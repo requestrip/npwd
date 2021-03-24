@@ -1,6 +1,6 @@
 import { mainLogger } from '../sv_logger';
 import { pool } from '../db';
-import { generatePhoneNumber } from '../functions';
+import { generateEmail, generatePhoneNumber } from '../functions';
 import { PhoneEvents } from '../../../typings/phone';
 
 export const playerLogger = mainLogger.child({
@@ -48,12 +48,15 @@ export async function handlePlayerAdd(pSource: number) {
     }
     const { firstname, lastname } = playerInfo;
 
+    const email = await generateEmail(playerIdentifer);
+
     const newPlayer = new Player({
       identifier: playerIdentifer,
       source: pSource,
       username,
       firstname,
       lastname,
+      email,
       phoneNumber: phone_number,
     });
 
@@ -161,6 +164,7 @@ interface PlayerClassArgs {
   lastname: string;
   identifier: string;
   phoneNumber: string;
+  email: string;
 }
 
 // Public getters/setters are for servers with multicharacter systems
@@ -173,13 +177,23 @@ export class Player {
   private _firstname: string;
   private _lastname: string;
   private _phoneNumber: string;
+  private _email: string;
 
-  constructor({ source, firstname, lastname, identifier, phoneNumber, username }: PlayerClassArgs) {
+  constructor({
+    source,
+    firstname,
+    lastname,
+    identifier,
+    phoneNumber,
+    username,
+    email,
+  }: PlayerClassArgs) {
     this.source = source;
     this.identifier = identifier;
     this._firstname = firstname;
     this._lastname = lastname;
     this._phoneNumber = phoneNumber;
+    this._email = email;
     this.username = username;
   }
   /**
@@ -231,5 +245,19 @@ export class Player {
    **/
   public setPhoneNumber(number: string): void {
     this._phoneNumber = number;
+  }
+
+  /**
+   * Set the stored phone email for a user
+   **/
+  public setEmail(email: string): void {
+    this._email = email;
+  }
+
+  /**
+   * Get the stored phone email for a user
+   **/
+  public getEmail(): string {
+    return this._email;
   }
 }

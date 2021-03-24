@@ -16,6 +16,11 @@ interface MatchConfig {
   generateProfileNameFromUsers: boolean;
   allowEdtiableProfileName: boolean;
 }
+
+interface EmailConfig {
+  provider: string;
+}
+
 interface Debug {
   level: 'error' | 'warn' | 'info' | 'verbose' | 'debug';
   enabled: boolean;
@@ -46,6 +51,7 @@ export interface IServerConfig {
   twitter: TwitterConfig;
   match: MatchConfig;
   bank: BankConfig;
+  email: EmailConfig;
   notificationPosition: NotificationConfig;
   general: General;
   debug: Debug;

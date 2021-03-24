@@ -31,6 +31,9 @@
     "generateProfileNameFromUsers": true,
     "allowEdtiableProfileName": true
   },
+  "email": {
+    "provider": "project-error.dev"
+  },
   "bank": {
     "showNotifications": true
   },

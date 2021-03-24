@@ -1,8 +1,10 @@
-import events from '../utils/events';
+import { EmailEvents, EmailMessageInput } from '../../typings/email';
 import { mainLogger } from './sv_logger';
-import { getSource } from './functions';
+import { getIdentifierByEmail, getPlayer, getSource } from './functions';
 import { IEmail, IEmailMessage } from '../../phone/src/common/typings/email';
 import { pool } from './db';
+import config from '../utils/config';
+import { getPlayerInfo } from './players/sv_players';
 
 const emailLogger = mainLogger.child({ module: 'contact' });
 
@@ -115,18 +117,96 @@ function getEmailsFromMessages(messages: UnformattedEmailMessage[], myEmail: str
   return Array.from(map.values()).map((m) => ({ ...m, messagesMap: undefined }));
 }
 
-onNet(events.EMAIL_FETCH_INBOX, async () => {
+async function sendEmail(
+  sender_identifier: string,
+  sender: string,
+  receivers: { email: string; identifier: string }[],
+  body: string,
+  email_id_or_subject: number | string,
+  parent_id?: number,
+) {
+  let email_id = email_id_or_subject === 'number' ? email_id_or_subject : undefined;
+  if (typeof email_id_or_subject === 'string') {
+    const emailQuery = `INSERT INTO npwd_emails (subject) VALUES (?)`;
+    const [emailResult] = await pool.query(emailQuery, [email_id_or_subject]);
+    email_id = (emailResult as any).insertId;
+  }
+  const messageQuery = `INSERT INTO npwd_emails_messages (email_id, parent_id, send_date, body, sender, sender_identifier) VALUES (?, ?, ?, ?, ?, ?)`;
+  const [messageResult] = await pool.query(messageQuery, [
+    email_id,
+    parent_id || null,
+    Math.floor(Date.now() / 1000),
+    body,
+    sender,
+    sender_identifier,
+  ]);
+
+  const message_id = (messageResult as any).insertId;
+
+  const receiverQuery = `INSERT INTO npwd_emails_receivers (message_id, receiver, receiver_identifier, read_at) VALUES (?, ?, ?, ?)`;
+  const receiverPromises = receivers.map((r) =>
+    pool.query(receiverQuery, [message_id, r.email, r.identifier, null]),
+  );
+
+  await Promise.all(receiverPromises);
+
+  return messageResult;
+}
+
+onNet(EmailEvents.FETCH_INBOX, async () => {
   const _source = getSource();
   try {
-    const email = 'kidz@projecterror.dev';
-    const messages = await fetchInbox(email);
-    await new Promise((res) => setTimeout(res, 6000));
-    const inbox = getEmailsFromMessages(messages, email);
-    emitNet(events.EMAIL_FETCH_INBOX_SUCCESS, _source, inbox);
+    const player = getPlayer(_source);
+    if (!player) {
+      throw new Error('Couldnt find player');
+    }
+    const playerEmail = player.getEmail();
+    const messages = await fetchInbox(player.identifier);
+    const inbox = getEmailsFromMessages(messages, playerEmail);
+    emitNet(EmailEvents.FETCH_INBOX_SUCCESS, _source, inbox);
   } catch (e) {
     emailLogger.error(`Failed to fetch email inbox, ${e.message}`, {
       source: _source,
     });
-    emitNet(events.EMAIL_FETCH_INBOX_ERROR, _source, e);
+    emitNet(EmailEvents.FETCH_INBOX_ERROR, _source, e);
   }
 });
+
+onNet(
+  EmailEvents.SEND_EMAIL,
+  async ({ email_id, subject, parent_id, body, receivers }: EmailMessageInput) => {
+    const _source = getSource();
+    try {
+      const player = getPlayer(_source);
+      if (!player) {
+        throw new Error('Couldnt find player');
+      }
+
+      const mappedReceivers = await Promise.all(
+        receivers
+          .split(',')
+          .map((s: string) => s.trim())
+          .map(async (email: string) => {
+            const identifier = await getIdentifierByEmail(email);
+            return { email, identifier };
+          }),
+      );
+
+      const email = await sendEmail(
+        player.identifier,
+        player.getEmail(),
+        mappedReceivers,
+        body,
+        email_id || subject,
+        parent_id || null,
+      );
+
+      emitNet(EmailEvents.SEND_EMAIL_SUCCESS, _source, email);
+    } catch (e) {
+      emailLogger.error(`Failed to send email, ${e.message}`, {
+        source: _source,
+      });
+      emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, e);
+    }
+  },
+);
