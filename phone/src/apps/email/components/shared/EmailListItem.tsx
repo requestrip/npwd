@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import MarkRead from '@material-ui/icons/Markunread';
 import MarkUnread from '@material-ui/icons/MarkunreadMailbox';
-import { IEmail } from '../../../../common/typings/email';
+import { IEmail } from '../../../../../../typings/email';
 import { useHistory } from 'react-router';
 import { useEmail } from '../../hooks/useEmail';
 
@@ -37,11 +37,7 @@ export const EmailListItem = ({ email }: { email: IEmail }) => {
         <Avatar>{latestMessage.sender.charAt(0).toUpperCase()}</Avatar>
       </ListItemAvatar>
       <ListItemText secondary={highlight ? <strong>{sendDate}</strong> : <span>{sendDate}</span>}>
-        {highlight ? (
-          <strong>{latestMessage.subject}</strong>
-        ) : (
-          <span>{latestMessage.subject}</span>
-        )}
+        {highlight ? <strong>{email.subject}</strong> : <span>{email.subject}</span>}
       </ListItemText>
       <ListItemSecondaryAction>
         {!mine && (

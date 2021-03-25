@@ -1,12 +1,9 @@
-import { EmailEvents, EmailMessageInput } from '../../typings/email';
+import { EmailEvents, EmailMessageInput, IEmail, IEmailMessage } from '../../typings/email';
 import { mainLogger } from './sv_logger';
 import { getIdentifierByEmail, getPlayer, getSource } from './functions';
-import { IEmail, IEmailMessage } from '../../phone/src/common/typings/email';
 import { pool } from './db';
-import config from '../utils/config';
-import { getPlayerInfo } from './players/sv_players';
 
-const emailLogger = mainLogger.child({ module: 'contact' });
+const emailLogger = mainLogger.child({ module: 'email' });
 
 export interface UnformattedEmailMessage {
   message_id: number;
@@ -125,7 +122,7 @@ async function sendEmail(
   email_id_or_subject: number | string,
   parent_id?: number,
 ) {
-  let email_id = email_id_or_subject === 'number' ? email_id_or_subject : undefined;
+  let email_id = typeof email_id_or_subject === 'number' ? email_id_or_subject : undefined;
   if (typeof email_id_or_subject === 'string') {
     const emailQuery = `INSERT INTO npwd_emails (subject) VALUES (?)`;
     const [emailResult] = await pool.query(emailQuery, [email_id_or_subject]);
@@ -168,7 +165,7 @@ onNet(EmailEvents.FETCH_INBOX, async () => {
     emailLogger.error(`Failed to fetch email inbox, ${e.message}`, {
       source: _source,
     });
-    emitNet(EmailEvents.FETCH_INBOX_ERROR, _source, e);
+    emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, 'APPS_EMAIL_FETCH_INBOX_ERROR');
   }
 });
 
@@ -176,37 +173,59 @@ onNet(
   EmailEvents.SEND_EMAIL,
   async ({ email_id, subject, parent_id, body, receivers }: EmailMessageInput) => {
     const _source = getSource();
+
+    if (!body || !receivers) {
+      emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, 'APPS_EMAIL_SEND_EMAIL_BAD_INPUT');
+      return;
+    }
+
     try {
       const player = getPlayer(_source);
       if (!player) {
         throw new Error('Couldnt find player');
       }
 
+      const parsedReceivers = receivers
+        .split(',')
+        .map((email: string) => email.trim().toLowerCase());
+
       const mappedReceivers = await Promise.all(
-        receivers
-          .split(',')
-          .map((s: string) => s.trim())
-          .map(async (email: string) => {
-            const identifier = await getIdentifierByEmail(email);
-            return { email, identifier };
-          }),
+        parsedReceivers.map(async (email: string) => {
+          const identifier = await getIdentifierByEmail(email);
+          return { email, identifier };
+        }),
       );
 
       const email = await sendEmail(
         player.identifier,
         player.getEmail(),
-        mappedReceivers,
+        mappedReceivers.filter((r) => !!r.identifier),
         body,
         email_id || subject,
         parent_id || null,
       );
+
+      const failedReceivers = mappedReceivers.filter((r) => !r.identifier);
+
+      if (failedReceivers.length) {
+        failedReceivers.map((r) =>
+          emailLogger.debug(`Email receiver not found in DB: "${r.email}"`, {
+            source: _source,
+          }),
+        );
+
+        if (failedReceivers.length === mappedReceivers.length) {
+          emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, 'APPS_EMAIL_SEND_EMAIL_ERROR_NOT_FOUND');
+          return;
+        }
+      }
 
       emitNet(EmailEvents.SEND_EMAIL_SUCCESS, _source, email);
     } catch (e) {
       emailLogger.error(`Failed to send email, ${e.message}`, {
         source: _source,
       });
-      emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, e);
+      emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, 'GENERIC_UNEXPECTED_ERROR');
     }
   },
 );

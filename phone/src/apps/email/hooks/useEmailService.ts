@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { IEmail } from '../../../common/typings/email';
+import { EmailEvents, IEmail } from '../../../../../typings/email';
 import InjectDebugData from '../../../os/debug/InjectDebugData';
 import { useNuiEvent } from '../../../os/nui-events/hooks/useNuiEvent';
 import { emailState } from './state';
@@ -22,7 +22,7 @@ InjectDebugData<IEmail[]>(
   [
     {
       app: 'EMAIL',
-      method: 'phone:fetchSentEmailsSuccess',
+      method: EmailEvents.FETCH_INBOX_SUCCESS,
       data: [
         {
           id: 1,
@@ -56,7 +56,7 @@ InjectDebugData<IEmail[]>(
     },
     {
       app: 'EMAIL',
-      method: 'phone:fetchEmailsSuccess',
+      method: EmailEvents.FETCH_INBOX_SUCCESS,
       data: [
         {
           id: 3,

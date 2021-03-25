@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { IEmail } from '../../../common/typings/email';
+import { IEmail } from '../../../../../typings/email';
 
 export const emailState = {
   search: atom<IEmail[]>({

@@ -121,15 +121,15 @@ export async function generateEmail(identifier: string): Promise<string> {
   const email = result[0]?.phone_email;
 
   if (!email) {
-    const emailUser = await getDefaultProfileNames(identifier);
+    const userProfileNames = await getDefaultProfileNames(identifier);
 
-    if (!emailUser) {
+    if (!userProfileNames) {
       throw new Error('Must provide a fullName or phoneNumber option to create an email');
     }
 
     const emailProvider = config.email.provider || 'project-error.dev';
 
-    const newEmail = `${emailUser}@${emailProvider}`;
+    const newEmail = `${userProfileNames[0]}@${emailProvider}`.trim().toLowerCase();
     const query = 'UPDATE users SET phone_email = ? WHERE identifier = ?';
     await pool.query(query, [newEmail, identifier]);
     mainLogger.debug(`Inserting email into Database: ${newEmail}`);

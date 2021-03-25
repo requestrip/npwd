@@ -1,5 +1,5 @@
 import React from 'react';
-import { IEmail } from '../../../../common/typings/email';
+import { IEmail } from '../../../../../../typings/email';
 import { EmailListItem } from './EmailListItem';
 import { List } from '@material-ui/core';
 

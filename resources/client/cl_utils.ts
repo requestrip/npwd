@@ -60,45 +60,45 @@ export default class ClientUtils {
     });
   }
 
-  public registerNuiServerCallback<I = any, R = any>(
-    app: string,
-    event: string,
-    successEvent?: string,
-    errorEvent?: string,
-  ) {
-    const uid = uuidv4();
-    const callbackId = `${event}:${uid}`;
-
-    RegisterNuiCallbackType(event);
-    on(`__cfx_nui:${event}`, (data: I, cb: (err: any, data?: R) => void) => {
-      if (this._callbacks.has(callbackId)) {
-        cb(new Error(`Nui Server Callback with name "${event}" is already waiting for server!`));
-        return;
-      }
-      emitNet(event, data);
+  registerNuiCallback<D = unknown>(event: string, cb: (error: any, result?: D) => void): boolean {
+    if (this._callbacks.has(event)) {
+      cb(new Error(`Nui Server Callback with name "${event}" is already waiting for server!`));
+      return false;
+    }
+    this._callbacks.set(event, {
+      cb,
+      timeout: setTimeout(() => {
+        if (this._callbacks.has(event)) {
+          this._callbacks
+            .get(event)
+            .cb(new Error(`Nui Server Callback with name "${event}" timed out`));
+          this._callbacks.delete(event);
+        }
+      }, this._settings.promiseTimeout),
     });
+    return true;
+  }
 
-    const _success = successEvent || `${event}Success`;
-    onNet(_success, (response: R) => {
-      if (this._callbacks.has(callbackId)) {
-        const callback = this._callbacks.get(callbackId);
-        clearTimeout(callback.timeout);
-        callback.cb(null, response);
-        this._callbacks.delete(callbackId);
-        sendMessage(app, _success, response);
-      }
-    });
+  registerNuiCallbackSuccess<R = unknown>(event: string, response?: R) {
+    if (this._callbacks.has(event)) {
+      const callback = this._callbacks.get(event);
+      clearTimeout(callback.timeout);
+      callback.cb(null, response);
+      this._callbacks.delete(event);
+      return true;
+    }
+    return false;
+  }
 
-    const _error = errorEvent || `${event}Error`;
-    onNet(_error, (err: any) => {
-      if (this._callbacks.has(callbackId)) {
-        const callback = this._callbacks.get(callbackId);
-        clearTimeout(callback.timeout);
-        callback.cb(err);
-        this._callbacks.delete(callbackId);
-        sendMessage(app, _error, err);
-      }
-    });
+  registerNuiCallbackError(event: string, error?: any) {
+    if (this._callbacks.has(event)) {
+      const callback = this._callbacks.get(event);
+      clearTimeout(callback.timeout);
+      callback.cb(error);
+      this._callbacks.delete(event);
+      return true;
+    }
+    return false;
   }
 }
 

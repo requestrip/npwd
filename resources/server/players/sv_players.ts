@@ -251,7 +251,7 @@ export class Player {
    * Set the stored phone email for a user
    **/
   public setEmail(email: string): void {
-    this._email = email;
+    this._email = email.trim().toLowerCase();
   }
 
   /**

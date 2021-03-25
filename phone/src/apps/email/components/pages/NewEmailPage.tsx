@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SendIcon from '@material-ui/icons/Send';
-import { Box, Fab, makeStyles, TextField } from '@material-ui/core';
+import { Box, CircularProgress, Fab, makeStyles, TextField } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
+import { useEmail } from '../../hooks/useEmail';
+import { useQueryParams } from '../../../../common/hooks/useQueryParams';
 
 const useStyles = makeStyles((theme) => ({
   search: {
@@ -21,9 +23,32 @@ const useStyles = makeStyles((theme) => ({
 export const NewEmailPage = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { sendEmail, loading } = useEmail();
   const [subject, setSubject] = useState<string>('');
   const [receivers, setReceivers] = useState<string>('');
   const [body, setBody] = useState<string>('');
+
+  const {
+    messageId: queryMessageId,
+    subject: querySubject,
+    emailId: queryEmailId,
+    receivers: queryReceivers,
+    body: queryBody,
+  } = useQueryParams({
+    subject: '',
+    emailId: null,
+    receivers: '',
+    messageId: null,
+    body: '',
+  });
+
+  useEffect(() => {
+    if (queryEmailId) {
+      setSubject(querySubject);
+      setReceivers(queryReceivers);
+      setBody(queryBody);
+    }
+  }, [queryEmailId, querySubject, queryReceivers, queryBody]);
 
   const handleSubject = (e) => {
     setSubject(e.target.value || '');
@@ -35,6 +60,16 @@ export const NewEmailPage = () => {
 
   const handleBody = (e) => {
     setBody(e.target.value || '');
+  };
+
+  const handleSubmit = () => {
+    sendEmail({
+      subject,
+      receivers,
+      body,
+      email_id: Number(queryEmailId) || undefined,
+      parent_id: Number(queryMessageId) || undefined,
+    });
   };
 
   return (
@@ -50,6 +85,7 @@ export const NewEmailPage = () => {
           onChange={handleReceiver}
         />
         <TextField
+          disabled={!!queryEmailId}
           variant="outlined"
           placeholder="Subject"
           color="primary"
@@ -68,8 +104,13 @@ export const NewEmailPage = () => {
           value={body}
           onChange={handleBody}
         />
-        <Fab disabled={!body || !receivers} className={classes.sendBtn} color="primary">
-          <SendIcon />
+        <Fab
+          onClick={handleSubmit}
+          disabled={!body || !receivers}
+          className={classes.sendBtn}
+          color="primary"
+        >
+          {loading ? <CircularProgress color="secondary" size={1} /> : <SendIcon />}
         </Fab>
       </Box>
     </Box>

@@ -7,8 +7,7 @@ import { Route, Switch } from 'react-router-dom';
 import { InboxPage } from './pages/InboxPage';
 import { EmailAppHeader } from './EmailAppHeader';
 import { NewEmailPage } from './pages/NewEmailPage';
-import { SentPage } from './pages/SentPage';
-import { EmailDetailsPage } from './pages/EmailDetailsPage';
+import { EmailDetailsPage } from './pages/EmailDetailsPage'; // <--- What the hell is going on
 
 export const EmailApp = () => {
   return (
@@ -19,9 +18,6 @@ export const EmailApp = () => {
           <Switch>
             <Route path="/email" exact>
               <InboxPage />
-            </Route>
-            <Route path="/email/sent" exact>
-              <SentPage />
             </Route>
             <Route path="/email/new" exact>
               <NewEmailPage />

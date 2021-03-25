@@ -3,7 +3,7 @@ import LeftIcon from '@material-ui/icons/ChevronLeft';
 import RightIcon from '@material-ui/icons/ChevronRight';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { IEmailMessage } from '../../../../common/typings/email';
+import { IEmailMessage } from '../../../../../../typings/email'; // :)
 import { useEmail } from '../../hooks/useEmail';
 import { EmailMessage } from '../shared/EmailMessage';
 
@@ -71,7 +71,7 @@ export const EmailDetailsPage = () => {
           <CircularProgress color="primary" />
         </Box>
       ) : (
-        <EmailMessage message={message} />
+        <EmailMessage message={message} subject={email.subject} />
       )}
     </Box>
   );
