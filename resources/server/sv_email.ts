@@ -1,4 +1,11 @@
-import { EmailEvents, EmailMessageInput, IEmail, IEmailMessage } from '../../typings/email';
+import {
+  EmailEvents,
+  EmailMessageInput,
+  GlobalEmailEvents,
+  IEmail,
+  IEmailMessage,
+  SendEmailToIdentifierInput,
+} from '../../typings/email';
 import { mainLogger } from './sv_logger';
 import { getIdentifierByEmail, getPlayer, getSource } from './functions';
 import { pool } from './db';
@@ -168,6 +175,11 @@ onNet(EmailEvents.FETCH_INBOX, async () => {
     emitNet(EmailEvents.SEND_EMAIL_ERROR, _source, 'APPS_EMAIL_FETCH_INBOX_ERROR');
   }
 });
+
+onNet(
+  GlobalEmailEvents.SEND_EMAIL_TO_IDENTIFIER,
+  async ({ identifier, provider, externalActions, phoneActions }: SendEmailToIdentifierInput) => {},
+);
 
 onNet(
   EmailEvents.SEND_EMAIL,

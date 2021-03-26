@@ -44,6 +44,27 @@ export async function getIdentifierByPhoneNumber(
 }
 
 /**
+ * Return the attached email for a given identifier
+ * @param identifier The identifier to return email for
+ * @param fetch Whether or not to query the database if a given player is offline
+ **/
+export async function getEmailByIdentifier(
+  identifier: string,
+  fetch?: boolean,
+): Promise<string | null> {
+  const online = PlayersByIdentifier.get(identifier);
+  if (online) return online.getEmail();
+  // Whether we fetch from database if not found in online players
+  if (fetch) {
+    const query = `SELECT phone_email FROM users WHERE identifier = ?`;
+    const [results] = await pool.query(query, [identifier]);
+    // Get identifier from results
+    return (results as { phone_email: string }[])[0].phone_email;
+  }
+  return null;
+}
+
+/**
  * Return the attached identifier for a given email
  * @param email The email to return identifier for
  * @param fetch Whether or not to query the database if a given player is offline

@@ -1,10 +1,15 @@
 export interface IEmailPhoneAction {
-  path: string;
+  href: string;
+  label: string;
+  deleteEmail?: boolean;
+  closePhone?: boolean;
 }
 
 export interface IEmailExternalAction {
-  eventName: string;
-  args: Array<string | number>;
+  callbackEvent: string;
+  callbackArg: string | number | boolean | void;
+  label: string;
+  deleteEmail?: boolean;
   closePhone?: boolean;
 }
 
@@ -34,6 +39,19 @@ export interface EmailMessageInput {
   parent_id?: number;
   body: string;
   receivers: string;
+}
+
+export interface SendEmailToIdentifierInput {
+  identifier: string;
+  provider: string;
+  subject: string;
+  body: string;
+  phoneActions: IEmailPhoneAction[];
+  externalActions: IEmailExternalAction[];
+}
+
+export enum GlobalEmailEvents {
+  SEND_EMAIL_TO_IDENTIFIER = 'npwd:sendEmailToIdentifier',
 }
 
 export enum EmailEvents {
