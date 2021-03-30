@@ -137,6 +137,7 @@ export async function generatePhoneNumber(identifier: string): Promise<string> {
 
 export async function generateEmail(
   identifier: string,
+  phoneNumber: string,
   cb?: (email: string) => void,
 ): Promise<string> {
   const getQuery = `SELECT phone_email FROM users WHERE identifier = ?`;
@@ -145,7 +146,12 @@ export async function generateEmail(
   const email = result[0]?.phone_email;
 
   if (!email) {
-    const userProfileNames = await getDefaultProfileNames(identifier);
+    let userProfileNames = [phoneNumber] as string[];
+    try {
+      userProfileNames = await getDefaultProfileNames(identifier);
+    } catch (e) {
+      mainLogger.debug(`Could not find player information, defaulting to phone number as email`);
+    }
 
     if (!userProfileNames) {
       throw new Error('Must provide a fullName or phoneNumber option to create an email');

@@ -51,7 +51,7 @@ export async function handlePlayerAdd(pSource: number) {
     }
     const { firstname, lastname } = playerInfo;
 
-    const email = await generateEmail(playerIdentifer, (email) => {
+    const email = await generateEmail(playerIdentifer, phone_number, (email) => {
       const subject = 'New Phone Who Dis';
       const sender = `no-reply@${config.email.provider || 'project-error.dev'}`;
       const body = '--translate-APPS_EMAIL_WELCOME';
