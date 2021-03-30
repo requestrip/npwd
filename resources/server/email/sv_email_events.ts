@@ -72,6 +72,8 @@ const onSendEmail = async ({
       body,
       email_id || subject,
       parent_id || null,
+      phoneActions,
+      externalActions,
     );
 
     const failedReceivers = mappedReceivers.filter((r) => !r.identifier);

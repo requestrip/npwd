@@ -106,8 +106,8 @@ export async function sendEmail(
   body: string,
   email_id_or_subject: number | string,
   parent_id?: number,
-  external_actions?: IEmailExternalAction[],
   phone_actions?: IEmailPhoneAction[],
+  external_actions?: IEmailExternalAction[],
 ) {
   let email_id = typeof email_id_or_subject === 'number' ? email_id_or_subject : undefined;
 
