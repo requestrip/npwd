@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReplyAllIcon from '@material-ui/icons/ReplyAll';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Box, Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { IEmailMessage } from '../../../../../../typings/email';
+import { IEmailMessage, EmailEvents } from '../../../../../../typings/email';
 import { useEmail } from '../../hooks/useEmail';
+import { useNuiEventCallback } from '../../../../os/nui-events/hooks/useNuiEventCallback';
+import { useHistory } from 'react-router';
 
 export const EmailMessage = ({ message, subject }: { message: IEmailMessage; subject: string }) => {
+  const history = useHistory();
   const { t } = useTranslation();
   const { replyEmail } = useEmail();
+
+  const [{ phoneActions, externalActions }, setActions] = useState<
+    Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
+  >({});
+
+  const [fetchEmailActions, { loading }] = useNuiEventCallback(
+    'EMAIL',
+    EmailEvents.FETCH_MESSAGE_ACTIONS,
+    setActions,
+  );
+
+  useEffect(() => {
+    if (message.hasActions) {
+      fetchEmailActions();
+    }
+  }, [fetchEmailActions, message.hasActions]);
+
   return (
     <Box px={2}>
       <Card>
@@ -33,6 +53,15 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
             ))}
           </CardContent>
         </Card>
+        {message.hasActions && phoneActions && (
+          <CardActions>
+            <Box textAlign="right" width="100%">
+              {phoneActions.map((action) => (
+                <Button onClick={() => history.push(action.href)}>{action.label}</Button>
+              ))}
+            </Box>
+          </CardActions>
+        )}
         <CardActions>
           <Box textAlign="right" width="100%">
             <Button

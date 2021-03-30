@@ -23,6 +23,7 @@ export interface IEmailMessage {
   sender: string;
   sendDate: number;
   body: string;
+  hasActions: boolean;
   phoneActions?: Array<IEmailPhoneAction>;
   externalActions?: Array<IEmailExternalAction>;
 }
@@ -39,6 +40,8 @@ export interface EmailMessageInput {
   parent_id?: number;
   body: string;
   receivers: string;
+  phoneActions?: IEmailPhoneAction[];
+  externalActions?: IEmailExternalAction[];
 }
 
 export interface SendEmailToIdentifierInput {
@@ -61,4 +64,7 @@ export enum EmailEvents {
   SEND_EMAIL = 'npwd:sendEmail',
   SEND_EMAIL_SUCCESS = 'npwd:sendEmailSuccess',
   SEND_EMAIL_ERROR = 'npwd:sendEmailError',
+  FETCH_MESSAGE_ACTIONS = 'npwd:fetchEmailMessageActions',
+  FETCH_MESSAGE_ACTIONS_SUCCESS = 'npwd:fetchEmailMessageActionsSuccess',
+  FETCH_MESSAGE_ACTIONS_ERROR = 'npwd:fetchEmailMessageActionsError',
 }
