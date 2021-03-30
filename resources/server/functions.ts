@@ -135,7 +135,10 @@ export async function generatePhoneNumber(identifier: string): Promise<string> {
   return phoneNumber;
 }
 
-export async function generateEmail(identifier: string): Promise<string> {
+export async function generateEmail(
+  identifier: string,
+  cb?: (email: string) => void,
+): Promise<string> {
   const getQuery = `SELECT phone_email FROM users WHERE identifier = ?`;
   const [results] = await pool.query(getQuery, [identifier]);
   const result = <any[]>results;
@@ -153,6 +156,7 @@ export async function generateEmail(identifier: string): Promise<string> {
     const newEmail = `${userProfileNames[0]}@${emailProvider}`.trim().toLowerCase();
     const query = 'UPDATE users SET phone_email = ? WHERE identifier = ?';
     await pool.query(query, [newEmail, identifier]);
+    cb?.(newEmail);
     mainLogger.debug(`Inserting email into Database: ${newEmail}`);
     return newEmail;
   }

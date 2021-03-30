@@ -3,10 +3,22 @@ import ReplyAllIcon from '@material-ui/icons/ReplyAll';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Box, Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { IEmailMessage, EmailEvents } from '../../../../../../typings/email';
+import { IEmailMessage, EmailEvents, IEmail } from '../../../../../../typings/email';
 import { useEmail } from '../../hooks/useEmail';
 import { useNuiEventCallback } from '../../../../os/nui-events/hooks/useNuiEventCallback';
 import { useHistory } from 'react-router';
+import { TFunction } from 'i18next';
+
+const mapParagraphs = (paragraph: string, t: TFunction) => {
+  const isTranslate = paragraph.includes('--translate-');
+  const [, tKey] = paragraph.split('--translate-');
+  const text = isTranslate ? t(tKey) : paragraph;
+  return (
+    <Typography variant="caption" paragraph>
+      {text}
+    </Typography>
+  );
+};
 
 export const EmailMessage = ({ message, subject }: { message: IEmailMessage; subject: string }) => {
   const history = useHistory();
@@ -17,17 +29,16 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
     Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
   >({});
 
-  const [fetchEmailActions, { loading }] = useNuiEventCallback(
-    'EMAIL',
-    EmailEvents.FETCH_MESSAGE_ACTIONS,
-    setActions,
-  );
+  const [fetchEmailActions, { loading }] = useNuiEventCallback<
+    { messageId: number },
+    Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
+  >('EMAIL', EmailEvents.FETCH_MESSAGE_ACTIONS, setActions);
 
   useEffect(() => {
     if (message.hasActions) {
-      fetchEmailActions();
+      fetchEmailActions({ messageId: message.id });
     }
-  }, [fetchEmailActions, message.hasActions]);
+  }, [fetchEmailActions, message.hasActions, message.id]);
 
   return (
     <Box px={2}>
@@ -45,13 +56,7 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
       </Card>
       <Box mt={2}>
         <Card>
-          <CardContent>
-            {message.body.split('\n').map((paragraph) => (
-              <Typography variant="caption" paragraph>
-                {paragraph}
-              </Typography>
-            ))}
-          </CardContent>
+          <CardContent>{message.body.split('\n').map((p) => mapParagraphs(p, t))}</CardContent>
         </Card>
         {message.hasActions && phoneActions && (
           <CardActions>

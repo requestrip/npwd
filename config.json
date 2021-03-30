@@ -32,7 +32,8 @@
     "allowEdtiableProfileName": true
   },
   "email": {
-    "provider": "project-error.dev"
+    "provider": "project-error.dev",
+    "welcomeEmail": "You have got a new phone number registered to you"
   },
   "bank": {
     "showNotifications": true

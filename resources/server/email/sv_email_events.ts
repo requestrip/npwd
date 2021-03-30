@@ -106,7 +106,7 @@ onNet(EmailEvents.FETCH_MESSAGE_ACTIONS, async ({ messageId }: { messageId: numb
     const actions = await fetchMessageActions(messageId);
     const phoneActions = mapUnformattedEmailPhoneActions(actions.phoneActions);
     const externalActions = mapUnformattedEmailExternalActions(actions.externalActions);
-    emitNet(EmailEvents.FETCH_MESSAGE_ACTIONS_SUCCESS, { phoneActions, externalActions });
+    emitNet(EmailEvents.FETCH_MESSAGE_ACTIONS_SUCCESS, _source, { phoneActions, externalActions });
   } catch (e) {
     emailLogger.error(`Failed to fetch email message actions, ${e.message}`, {
       source: _source,

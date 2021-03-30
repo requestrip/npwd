@@ -43,26 +43,31 @@ export async function fetchMessageActions(
 }> {
   const queryPhoneActions = `
     SELECT
-      npwd_emails_phone_actions.label as action_phone_label,
-      npwd_emails_phone_actions.close_phone as action_phone_close_phone,
-      npwd_emails_phone_actions.delete_email as action_phone_delete_email,
-      npwd_emails_phone_actions.href as action_phone_href
+      npwd_emails_phone_actions.label,
+      npwd_emails_phone_actions.close_phone,
+      npwd_emails_phone_actions.delete_email,
+      npwd_emails_phone_actions.href
     FROM npwd_emails_phone_actions
-    WHERE message_id = ?;
+    WHERE message_id = ?
   `;
   const queryExternalActions = `
     SELECT 
-      npwd_emails_external_actions.label as action_ext_label,
-      npwd_emails_external_actions.close_phone as action_ext_close_phone,
-      npwd_emails_external_actions.delete_email as action_ext_delete_email,
-      npwd_emails_external_actions.event_name as action_ext_event_name,
-      npwd_emails_external_actions.event_arg as action_ext_event_arg,
+      npwd_emails_external_actions.label,
+      npwd_emails_external_actions.close_phone,
+      npwd_emails_external_actions.delete_email,
+      npwd_emails_external_actions.event_name,
+      npwd_emails_external_actions.event_arg
     FROM npwd_emails_external_actions
-    WHERE message_id = ?;
+    WHERE message_id = ?
   `;
 
   const [phoneActions] = await pool.query(queryPhoneActions, [id]);
   const [externalActions] = await pool.query(queryExternalActions, [id]);
+
+  console.log({
+    phoneActions: phoneActions as UnformattedEmailPhoneAction[],
+    externalActions: externalActions as UnformattedEmailExternalAction[],
+  });
 
   return {
     phoneActions: phoneActions as UnformattedEmailPhoneAction[],
