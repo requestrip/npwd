@@ -23,7 +23,7 @@ const mapParagraphs = (paragraph: string, t: TFunction) => {
 export const EmailMessage = ({ message, subject }: { message: IEmailMessage; subject: string }) => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { replyEmail } = useEmail();
+  const { replyEmail, head } = useEmail();
 
   const [{ phoneActions, externalActions }, setActions] = useState<
     Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
@@ -40,6 +40,8 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
     }
   }, [fetchEmailActions, message.hasActions, message.id]);
 
+  const receivers = message.receivers.join(', ');
+
   return (
     <Box px={2}>
       <Card>
@@ -47,7 +49,7 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
           {t('GENERIC_FROM')}: <i>{message.sender}</i>
         </CardContent>
         <CardContent>
-          {t('GENERIC_TO')}: <i>{message.receivers.join(', ')}</i>
+          {t('GENERIC_TO')}: <i>{receivers}</i>
         </CardContent>
 
         <CardContent>
@@ -57,34 +59,38 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
       <Box mt={2}>
         <Card>
           <CardContent>{message.body.split('\n').map((p) => mapParagraphs(p, t))}</CardContent>
+          {message.hasActions && phoneActions && (
+            <CardActions>
+              <Box textAlign="right" width="100%">
+                {phoneActions.map((action) => (
+                  <Button color="primary" onClick={() => history.push(action.href)}>
+                    {action.label}
+                  </Button>
+                ))}
+              </Box>
+            </CardActions>
+          )}
         </Card>
-        {message.hasActions && phoneActions && (
+        {!message.sender.includes('no-reply') && (
           <CardActions>
             <Box textAlign="right" width="100%">
-              {phoneActions.map((action) => (
-                <Button onClick={() => history.push(action.href)}>{action.label}</Button>
-              ))}
+              <Button
+                onClick={() => replyEmail({ ...message, subject })}
+                color="primary"
+                startIcon={<ReplyAllIcon />}
+              >
+                {t('GENERIC_REPLY_ALL')}
+              </Button>
+              <Button
+                onClick={() => replyEmail({ ...message, subject, receivers: [message.sender] })}
+                color="primary"
+                startIcon={<ReplyIcon />}
+              >
+                {t('GENERIC_REPLY')}
+              </Button>
             </Box>
           </CardActions>
         )}
-        <CardActions>
-          <Box textAlign="right" width="100%">
-            <Button
-              onClick={() => replyEmail({ ...message, subject })}
-              color="primary"
-              startIcon={<ReplyAllIcon />}
-            >
-              {t('GENERIC_REPLY_ALL')}
-            </Button>
-            <Button
-              onClick={() => replyEmail({ ...message, subject, receivers: [message.sender] })}
-              color="primary"
-              startIcon={<ReplyIcon />}
-            >
-              {t('GENERIC_REPLY')}
-            </Button>
-          </Box>
-        </CardActions>
       </Box>
     </Box>
   );

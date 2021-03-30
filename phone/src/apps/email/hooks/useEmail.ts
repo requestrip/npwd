@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import qs from 'qs';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,13 +48,12 @@ export const useEmail = () => {
   ]);
 
   const replyEmail = (message: IEmailMessage & { subject: string }) => {
-    const sendDate = dayjs.unix(message.sendDate).format(t('DATE_FORMAT'));
     const receivers = message.receivers.join(',');
     const query = qs.stringify(
       {
         ...message,
         receivers,
-        body: ` \n\n ----- On ${sendDate} ${message.sender} wrote: ----- \n\n ${message.body}`,
+        body: '',
       },
       { addQueryPrefix: true },
     );

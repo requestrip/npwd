@@ -64,11 +64,6 @@ export async function fetchMessageActions(
   const [phoneActions] = await pool.query(queryPhoneActions, [id]);
   const [externalActions] = await pool.query(queryExternalActions, [id]);
 
-  console.log({
-    phoneActions: phoneActions as UnformattedEmailPhoneAction[],
-    externalActions: externalActions as UnformattedEmailExternalAction[],
-  });
-
   return {
     phoneActions: phoneActions as UnformattedEmailPhoneAction[],
     externalActions: externalActions as UnformattedEmailExternalAction[],

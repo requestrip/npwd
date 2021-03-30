@@ -221,7 +221,7 @@
     "APPS_MARKETPLACE_FORM_IMAGE": "Image or URL",
     "APPS_MARKETPLACE_FORM_DESCRIPTION": "Description",
 
-    "APPS_EMAIL_WELCOME": "Thanks for using New Phone Who Dis, your email is listed above and your registered phone number is: ",
+    "APPS_EMAIL_WELCOME": "Thanks for using New Phone Who Dis, your email is listed above and your phone number is in the Settings app",
     "APPS_EMAIL_INBOX": "Inbox",
     "APPS_EMAIL_SENT": "Sent",
     "APPS_EMAIL_SUBJECT": "Subject",

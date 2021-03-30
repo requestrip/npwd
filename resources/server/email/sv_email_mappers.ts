@@ -38,7 +38,7 @@ export function mapUnformattedEmailMessages(
         }
         email.messagesMap.set(message.message_id, {
           ...currentMessage,
-          receivers: [...currentMessage.receivers, message.receiver_identifier],
+          receivers: [...currentMessage.receivers, message.receiver],
         });
       } else {
         email.messagesMap.set(message.message_id, formatMessage(message, myEmail));
