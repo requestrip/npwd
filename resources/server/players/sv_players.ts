@@ -4,6 +4,7 @@ import { generateEmail, generatePhoneNumber } from '../functions';
 import { PhoneEvents } from '../../../typings/phone';
 import { sendEmail } from './../email/sv_email';
 import config from '../../utils/config';
+import { IEmailExternalAction } from '../../../typings/email';
 
 export const playerLogger = mainLogger.child({
   module: 'player',
@@ -51,29 +52,28 @@ export async function handlePlayerAdd(pSource: number) {
     const { firstname, lastname } = playerInfo;
 
     const email = await generateEmail(playerIdentifer, (email) => {
-      sendEmail(
-        'npwd',
-        `no-reply@${config.email.provider || 'project-error.dev'}`,
-        [
-          {
-            email,
-            identifier: playerIdentifer,
-          },
-        ],
-        '--translate-APPS_EMAIL_WELCOME',
-        'New Phone Who Dis',
-        null,
-        [{ href: '/settings', label: 'Go to Settings', deleteEmail: false, closePhone: false }],
-        [],
-      );
+      const subject = 'New Phone Who Dis';
+      const sender = `no-reply@${config.email.provider || 'project-error.dev'}`;
+      const body = '--translate-APPS_EMAIL_WELCOME';
+      const phoneActions = [
+        { href: '/settings', label: 'Go to Settings', deleteEmail: false, closePhone: false },
+      ];
+      const externalActions = [] as IEmailExternalAction[];
+      const receivers = [
+        {
+          email,
+          identifier: playerIdentifer,
+        },
+      ];
+      sendEmail('npwd', sender, receivers, body, subject, null, phoneActions, externalActions);
     });
 
     const newPlayer = new Player({
       identifier: playerIdentifer,
       source: pSource,
       username,
-      firstname,
-      lastname,
+      firstname: firstname,
+      lastname: lastname,
       email,
       phoneNumber: phone_number,
     });
