@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from './ui/hooks/useSnackbar';
 import { isDefaultWallpaper } from './apps/settings/utils/isDefaultWallpaper';
 import { useEmailService } from './apps/email/hooks/useEmailService';
+import { useNuiEvent } from 'fivem-nui-react-lib';
 
 function Phone() {
   const { t, i18n } = useTranslation();
@@ -43,6 +44,8 @@ function Phone() {
   const [settings] = useSettings();
 
   const { addAlert } = useSnackbar();
+
+  useNuiEvent('asd', 'asd', console.log);
 
   // Set language from local storage
   // This will only trigger on first mount & settings changes
