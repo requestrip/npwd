@@ -22,7 +22,5 @@
       "pre-commit": "npm run format:staged"
     }
   },
-  "dependencies": {
-    "fivem-nui-react-lib": "C:/Users/Fran/Desktop/fivem-nui-react-lib/"
-  }
+  "dependencies": {}
 }
