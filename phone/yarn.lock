@@ -6718,11 +6718,21 @@ findup-sync@^3.0.0:
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
 
+<<<<<<< HEAD
 fivem-nui-react-lib@2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/fivem-nui-react-lib/-/fivem-nui-react-lib-2.2.6.tgz#2ffc01aee5a01aeb444c7c404e3e2b374b9798d7"
   integrity sha512-h8WJsyP7/VehkmRdfs9/pjGK73LmZSEeWH4kW0Mo9InC0qIulcTfJnnvdp40fIJ6SSCZLjteSQrUN6f+ZUoKdA==
   dependencies:
+=======
+fivem-nui-react-lib@2.0.12:
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/fivem-nui-react-lib/-/fivem-nui-react-lib-2.0.12.tgz#1a08b24f5007db74b87889114fcc41e49766f0dd"
+  integrity sha512-WRCJfk195b+MfmdhUhy/ZStSyKg0RkO6BpixQ62rY7iUic5LoW20auR1iQrO4lrfT2IHKMbVi8iKWjk8AwjJhg==
+  dependencies:
+    react "^17.0.2"
+    react-dom "^17.0.2"
+>>>>>>> 66a1dcc... Make use of library instead of having code duplicated
     typescript "^4.1.2"
 
 flat-cache@^3.0.4:
@@ -11734,6 +11744,15 @@ react-dom@17:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
+react-dom@^17.0.2:
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
+  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    scheduler "^0.20.2"
+
 react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
@@ -11897,7 +11916,11 @@ react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+<<<<<<< HEAD
 react@17.0.2:
+=======
+react@17.0.2, react@^17.0.2:
+>>>>>>> 66a1dcc... Make use of library instead of having code duplicated
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
