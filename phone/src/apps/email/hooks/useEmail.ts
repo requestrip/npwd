@@ -1,10 +1,10 @@
+import { useNuiCallback } from 'fivem-nui-react-lib';
 import qs from 'qs';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { EmailEvents, EmailMessageInput, IEmailMessage } from '../../../../../typings/email';
-import { useNuiEventCallback } from '../../../os/nui-events/hooks/useNuiEventCallback';
 import { useSnackbar } from '../../../ui/hooks/useSnackbar';
 import { emailState } from './state';
 
@@ -25,14 +25,14 @@ export const useEmail = () => {
     history.push('/email');
   }, [addAlert, history, t]);
 
-  const [sendEmail, { loading: sendLoading }] = useNuiEventCallback<EmailMessageInput>(
+  const [sendEmail, { loading: sendLoading }] = useNuiCallback<EmailMessageInput>(
     'EMAIL',
     EmailEvents.SEND_EMAIL,
     onSendSuccess,
     onError,
   );
 
-  const [fetchInbox, { loading: inboxLoading }] = useNuiEventCallback(
+  const [fetchInbox, { loading: inboxLoading }] = useNuiCallback(
     'EMAIL',
     EmailEvents.FETCH_INBOX,
     setInbox,

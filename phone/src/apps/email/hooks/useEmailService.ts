@@ -1,7 +1,7 @@
+import { useNuiEvent } from 'fivem-nui-react-lib';
 import { useSetRecoilState } from 'recoil';
 import { EmailEvents, IEmail } from '../../../../../typings/email';
 import InjectDebugData from '../../../os/debug/InjectDebugData';
-import { useNuiEvent } from '../../../os/nui-events/hooks/useNuiEvent';
 import { emailState } from './state';
 
 export const useEmailService = () => {
