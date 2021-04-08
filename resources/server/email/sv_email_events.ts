@@ -13,6 +13,8 @@ import {
   mapUnformattedEmailPhoneActions,
 } from './sv_email_mappers';
 
+const exp = (global as any).exports;
+
 const emailLogger = mainLogger.child({ module: 'email' });
 
 onNet(EmailEvents.FETCH_INBOX, async () => {
@@ -117,25 +119,36 @@ onNet(EmailEvents.FETCH_MESSAGE_ACTIONS, async ({ messageId }: { messageId: numb
 
 onNet(EmailEvents.SEND_EMAIL, onSendEmail);
 
-onNet(
-  GlobalEmailEvents.SEND_EMAIL_TO_IDENTIFIER,
-  async ({
-    identifier,
-    provider,
-    subject = '',
-    body = '',
-    externalActions = [],
-    phoneActions = [],
-  }: SendEmailToIdentifierInput) => {
-    if (!provider || !identifier) {
-      throw new Error('Tried to send npwd:sendEmailToIdentifier with missing parameters!');
-    }
-    let receivers = '';
-    try {
-      receivers = await getEmailByIdentifier(identifier, true);
-    } catch (e) {
-      throw new Error("Tried to send npwd:sendEmailToIdentifier but identifier doesn't exist!");
-    }
-    onSendEmail({ subject, body, receivers, externalActions, phoneActions });
+/**
+ * Exports
+ */
+async function sendEmailToIdentifier({
+  identifier,
+  provider,
+  subject = '',
+  body = '',
+  externalActions = [],
+  phoneActions = [],
+}: SendEmailToIdentifierInput) {
+  if (!provider || !identifier) {
+    throw new Error('Tried to send npwd:sendEmailToIdentifier with missing parameters!');
+  }
+  let receivers = '';
+  try {
+    receivers = await getEmailByIdentifier(identifier, true);
+  } catch (e) {
+    throw new Error("Tried to send npwd:sendEmailToIdentifier but identifier doesn't exist!");
+  }
+  onSendEmail({ subject, body, receivers, externalActions, phoneActions });
+}
+
+exp(
+  'sendEmailToIdentifier',
+  (params: SendEmailToIdentifierInput, callback: (err: Error) => void) => {
+    sendEmailToIdentifier(params)
+      .then(() => callback(null))
+      .catch(callback);
   },
 );
+
+onNet(GlobalEmailEvents.SEND_EMAIL_TO_IDENTIFIER, sendEmailToIdentifier);
