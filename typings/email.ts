@@ -67,4 +67,8 @@ export enum EmailEvents {
   FETCH_MESSAGE_ACTIONS = 'npwd:fetchEmailMessageActions',
   FETCH_MESSAGE_ACTIONS_SUCCESS = 'npwd:fetchEmailMessageActionsSuccess',
   FETCH_MESSAGE_ACTIONS_ERROR = 'npwd:fetchEmailMessageActionsError',
+  DELETE_EMAIL = 'npwd:deleteEmail',
+  DELETE_EMAIL_SUCCES = 'npwd:deleteEmailSuccess',
+  DELETE_EMAIL_ERROR = 'npwd:deleteEmailError',
+  TRIGGER_EXTERNAL_ACTION = 'npwd:triggerExternalAction',
 }

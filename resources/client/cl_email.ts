@@ -4,6 +4,18 @@ import { EmailEvents, EmailMessageInput, IEmailMessage } from '../../typings/ema
 import { ClUtils } from './client';
 
 /**
+ * Trigger External Action Callback
+ */
+RegisterNuiCallbackType(EmailEvents.TRIGGER_EXTERNAL_ACTION);
+on(
+  `__cfx_nui:${EmailEvents.TRIGGER_EXTERNAL_ACTION}`,
+  ({ event, arg }: { event: string; arg: string }, cb: () => void) => {
+    emitNet(event, arg);
+    cb();
+  },
+);
+
+/**
  * Fetch Inbox
  */
 RegisterNuiCallbackType(EmailEvents.FETCH_INBOX);

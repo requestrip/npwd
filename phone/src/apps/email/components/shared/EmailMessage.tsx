@@ -3,11 +3,17 @@ import ReplyAllIcon from '@material-ui/icons/ReplyAll';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Box, Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { IEmailMessage, EmailEvents, IEmail } from '../../../../../../typings/email';
+import {
+  IEmailMessage,
+  EmailEvents,
+  IEmailExternalAction,
+  IEmailPhoneAction,
+} from '../../../../../../typings/email';
 import { useEmail } from '../../hooks/useEmail';
-import { useNuiEventCallback } from '../../../../os/nui-events/hooks/useNuiEventCallback';
 import { useHistory } from 'react-router';
 import { TFunction } from 'i18next';
+import { useNuiCallback, useNuiRequest } from 'fivem-nui-react-lib';
+import { usePhone } from '../../../../os/phone/hooks/usePhone';
 
 const mapParagraphs = (paragraph: string, t: TFunction) => {
   const isTranslate = paragraph.includes('--translate-');
@@ -23,16 +29,38 @@ const mapParagraphs = (paragraph: string, t: TFunction) => {
 export const EmailMessage = ({ message, subject }: { message: IEmailMessage; subject: string }) => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { replyEmail, head } = useEmail();
+  const { replyEmail } = useEmail();
+  const { closePhone } = usePhone();
 
   const [{ phoneActions, externalActions }, setActions] = useState<
     Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
   >({});
 
-  const [fetchEmailActions, { loading }] = useNuiEventCallback<
+  const [fetchEmailActions] = useNuiCallback<
     { messageId: number },
     Pick<IEmailMessage, 'phoneActions' | 'externalActions'>
   >('EMAIL', EmailEvents.FETCH_MESSAGE_ACTIONS, setActions);
+
+  const { send } = useNuiRequest();
+
+  const actionSideEffects = (action: IEmailPhoneAction | IEmailExternalAction) => {
+    if (action.deleteEmail) {
+      send(EmailEvents.DELETE_EMAIL, { messageId: message.id, emailId: message.emailId });
+    }
+    if (action.closePhone) {
+      closePhone();
+    }
+  }
+
+  const triggerExternalAction = (action: IEmailExternalAction) => {
+    send(EmailEvents.TRIGGER_EXTERNAL_ACTION, { event: action.callbackArg, arg: action.callbackArg });
+    actionSideEffects(action);
+  };
+
+  const triggerPhoneAction = (action: IEmailPhoneAction) => {
+    history.push(action.href);
+    actionSideEffects(action);
+  }
 
   useEffect(() => {
     if (message.hasActions) {
@@ -63,7 +91,18 @@ export const EmailMessage = ({ message, subject }: { message: IEmailMessage; sub
             <CardActions>
               <Box textAlign="right" width="100%">
                 {phoneActions.map((action) => (
-                  <Button color="primary" onClick={() => history.push(action.href)}>
+                  <Button color="primary" onClick={() => triggerPhoneAction(action)}>
+                    {action.label}
+                  </Button>
+                ))}
+              </Box>
+            </CardActions>
+          )}
+          {message.hasActions && externalActions && (
+            <CardActions>
+              <Box textAlign="right" width="100%">
+                {externalActions.map((action) => (
+                  <Button color="primary" onClick={() => triggerExternalAction(action)}>
                     {action.label}
                   </Button>
                 ))}
