@@ -1,9 +1,27 @@
 import { ResourceConfig } from '../../typings/config';
 import { RewriteFrames } from '@sentry/integrations';
+
 // Setup and export config loaded at runtime
-export const config: ResourceConfig = JSON.parse(
-  LoadResourceFile(GetCurrentResourceName(), 'config.json'),
-);
+export const config: ResourceConfig = (() => {
+  const config = JSON.parse(LoadResourceFile(GetCurrentResourceName(), 'config.json'));
+  const convars = ['database'];
+
+  convars.forEach((cfg) => {
+    const options = (config as any)[cfg];
+    let convar = GetConvar(`npwd_${cfg}`, '');
+
+    if (convar !== '') {
+      convar = JSON.parse(convar);
+
+      Object.entries(convar).forEach(([key, value]) => {
+        // Type safety before overriding values
+        if (typeof value === typeof options[key]) options[key] = value;
+      });
+    }
+  });
+
+  return config;
+})();
 
 // Setup controllers
 import './db/pool';
