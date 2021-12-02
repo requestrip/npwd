@@ -4,7 +4,7 @@ import { RewriteFrames } from '@sentry/integrations';
 // Setup and export config loaded at runtime
 export const config: ResourceConfig = (() => {
   const config = JSON.parse(LoadResourceFile(GetCurrentResourceName(), 'config.json'));
-  const convars = ['database'];
+  const convars = ['general', 'database'];
 
   convars.forEach((cfg) => {
     const options = (config as any)[cfg];
