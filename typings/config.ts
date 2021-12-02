@@ -65,7 +65,7 @@ interface PhoneAsItemConfig {
 export interface ResourceConfig {
   database: DatabaseConfig;
   Locale: string;
-  PhoneAsItem: PhoneAsItemConfig;
+  phoneAsItem: PhoneAsItemConfig;
   RunRate: number;
   twitter: TwitterConfig;
   match: MatchConfig;

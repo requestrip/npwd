@@ -1,6 +1,6 @@
 {
   "Locale": "en",
-  "PhoneAsItem": {
+  "phoneAsItem": {
     "enabled": false,
     "exportResource": "my-core-resource",
     "exportFunction": "myCheckerFunction"
@@ -24,10 +24,7 @@
     "contentType": "multipart/form-data",
     "authorizationPrefix": "Client-ID",
     "useAuthorization": true,
-    "returnedDataIndexes": [
-      "data",
-      "link"
-    ]
+    "returnedDataIndexes": ["data", "link"]
   },
   "twitter": {
     "showNotifications": true,
