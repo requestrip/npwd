@@ -18,6 +18,10 @@ export enum MarketplaceDatabaseLimits {
   url = 255,
 }
 
+export enum ListingTypeResp {
+  DUPLICATE = 'duplicate',
+}
+
 export enum MarketplaceEvents {
   ADD_LISTING = 'npwd:addListing',
   FETCH_LISTING = 'npwd:fetchAllListings',
@@ -39,3 +43,10 @@ export interface MarketplaceDeleteDTO {
 export interface MarketplaceReportDTO {
   id: number;
 }
+
+export type ReportListingDTO = {
+  id: number;
+  title: string;
+  description: string;
+  url: string;
+};

@@ -1,12 +1,10 @@
 {
-  "Locale": "en",
   "phoneAsItem": {
     "enabled": false,
     "exportResource": "my-core-resource",
     "exportFunction": "myCheckerFunction"
   },
   "general": {
-    "useDashNumber": true,
     "enableMultiChar": false
   },
   "database": {
@@ -42,9 +40,6 @@
   "match": {
     "generateProfileNameFromUsers": true,
     "allowEditableProfileName": true
-  },
-  "bank": {
-    "showNotifications": true
   },
   "debug": {
     "level": "silly",

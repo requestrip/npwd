@@ -36,13 +36,13 @@ export const ListingActions: React.FC<MarketplaceListing> = ({ children, ...list
     }).then((resp) => {
       if (resp.status !== 'ok') {
         return addAlert({
-          message: t('APPS_MARKETPLACE_DELETE_LISTING_FAILED'),
+          message: t('MARKETPLACE.FEEDBACK.DELETE_LISTING_FAILED'),
           type: 'error',
         });
       }
 
       addAlert({
-        message: t('APPS_MARKETPLACE_DELETE_LISTING_SUCCESS'),
+        message: t('MARKETPLACE.FEEDBACK.DELETE_LISTING_SUCCESS'),
         type: 'success',
       });
     });
@@ -54,13 +54,13 @@ export const ListingActions: React.FC<MarketplaceListing> = ({ children, ...list
     }).then((resp) => {
       if (resp.status !== 'ok') {
         return addAlert({
-          message: t('APPS_MARKETPLACE_REPORT_LISTING_FAILED'),
+          message: t('MARKETPLACE.FEEDBACK.REPORT_LISTING_FAILED'),
           type: 'error',
         });
       }
 
       addAlert({
-        message: t('APPS_MARKETPLACE_REPORT_LISTING_SUCCESS'),
+        message: t('MARKETPLACE.FEEDBACK.REPORT_LISTING_SUCCESS'),
         type: 'success',
       });
     });
@@ -71,7 +71,7 @@ export const ListingActions: React.FC<MarketplaceListing> = ({ children, ...list
   };
 
   const handleMessage = () => {
-    history.push(`/messages/new/${listing.number}`);
+    history.push(`/messages/new?phoneNumber=${listing.number}`);
   };
 
   return (

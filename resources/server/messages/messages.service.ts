@@ -12,7 +12,7 @@ import {
   getIdentifiersFromParticipants,
   messagesLogger,
 } from './messages.utils';
-import { PromiseEventResp, PromiseRequest } from '../utils/PromiseNetEvents/promise.types';
+import { PromiseEventResp, PromiseRequest } from '../lib/PromiseNetEvents/promise.types';
 
 // felt good to just remove group chats.
 class _MessagesService {
@@ -41,6 +41,7 @@ class _MessagesService {
   ) {
     try {
       const sourcePlayer = PlayerService.getPlayer(reqObj.source);
+
       const result = await createMessageGroupsFromPhoneNumber(
         sourcePlayer.getIdentifier(),
         reqObj.data.targetNumber,
@@ -50,17 +51,20 @@ class _MessagesService {
         return resp({ status: 'error' });
       }
 
-      try {
-        const participant = PlayerService.getPlayerFromIdentifier(result.participant);
+      if (!result.doesExist) {
+        try {
+          const participant = PlayerService.getPlayerFromIdentifier(result.participant);
 
-        if (participant) {
-          emitNet(MessageEvents.CREATE_MESSAGE_CONVERSATION_SUCCESS, participant.source, {
-            conversation_id: result.conversationId,
-            phoneNumber: sourcePlayer.getPhoneNumber(),
-          });
+          if (participant) {
+            emitNet(MessageEvents.CREATE_MESSAGE_CONVERSATION_SUCCESS, participant.source, {
+              conversation_id: result.conversationId,
+              phoneNumber: sourcePlayer.getPhoneNumber(),
+            });
+          }
+        } catch (e) {
+          resp({ status: 'error', errorMsg: e.message });
+          messagesLogger.error(e.message);
         }
-      } catch (e) {
-        messagesLogger.error(e.message);
       }
 
       resp({
@@ -127,19 +131,19 @@ class _MessagesService {
         if (participantId !== player.getIdentifier()) {
           const participantPlayer = PlayerService.getPlayerFromIdentifier(participantId);
 
-          if (!participantPlayer) return;
-
-          emitNet(MessageEvents.SEND_MESSAGE_SUCCESS, participantPlayer.source, messageData);
-          emitNet(MessageEvents.CREATE_MESSAGE_BROADCAST, participantPlayer.source, {
-            conversationName: player.getPhoneNumber(),
-            conversationId: messageData.conversationId,
-            message: messageData.message,
-          });
+          if (participantPlayer) {
+            emitNet(MessageEvents.SEND_MESSAGE_SUCCESS, participantPlayer.source, messageData);
+            emitNet(MessageEvents.CREATE_MESSAGE_BROADCAST, participantPlayer.source, {
+              conversationName: player.getPhoneNumber(),
+              conversationId: messageData.conversationId,
+              message: messageData.message,
+            });
+          }
         }
       }
     } catch (e) {
       emitNet(MessageEvents.ACTION_RESULT, reqObj.source, {
-        message: 'APPS_MESSAGES_NEW_MESSAGE_FAILED',
+        message: 'MESSAGES.FEEDBACK.NEW_MESSAGE_FAILED',
         type: 'error',
       });
       messagesLogger.error(`Failed to send message, ${e.message}`, {

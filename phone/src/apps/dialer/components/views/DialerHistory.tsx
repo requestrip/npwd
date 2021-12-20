@@ -43,7 +43,7 @@ export const DialerHistory: React.FC = () => {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" paddingTop={35}>
         <p>
-          {t('APPS_DIALER_NO_HISTORY')}
+          {t('DIALER.NO_HISTORY')}
           <span role="img" aria-label="sad">
             😞
           </span>
@@ -67,6 +67,10 @@ export const DialerHistory: React.FC = () => {
                 // TODO: Locale changes are pending #168 merge
                 dayjs().to(dayjs.unix(parseInt(call.start)))
               }
+              primaryTypographyProps={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
             />
             <IconButton onClick={() => handleCall(call.receiver)} size="large">
               {<PhoneIcon />}
@@ -95,6 +99,10 @@ export const DialerHistory: React.FC = () => {
                 // TODO: Locale changes are pending #168 merge
                 dayjs().to(dayjs.unix(parseInt(call.start)))
               }
+              primaryTypographyProps={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
             />
             <IconButton onClick={() => handleCall(call.transmitter)} size="large">
               <PhoneIcon />

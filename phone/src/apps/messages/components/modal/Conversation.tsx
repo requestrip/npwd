@@ -3,7 +3,6 @@ import { Box, CircularProgress } from '@mui/material';
 
 import { Message, MessageConversation, MessageEvents } from '@typings/messages';
 import MessageInput from '../form/MessageInput';
-import useStyles from './modal.styles';
 import { MessageImageModal } from './MessageImageModal';
 import { useQueryParams } from '@common/hooks/useQueryParams';
 import { MessageBubble } from './MessageBubble';
@@ -14,18 +13,16 @@ import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useContactActions } from '../../../contacts/hooks/useContactActions';
 
 interface IProps {
   activeMessageGroup: MessageConversation;
   messages: Message[];
-
-  onClickDisplay(phoneNumber: string): void;
 }
 
 export const CONVERSATION_ELEMENT_ID = 'message-modal-conversation';
 
-const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickDisplay }) => {
-  const classes = useStyles();
+const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages }) => {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const query = useQueryParams();
   const referalImage = query?.image || null;
@@ -36,6 +33,9 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
   const [t] = useTranslation();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(!!messages.length);
+  const { getContactByNumber } = useContactActions();
+
+  const conversationContact = getContactByNumber(activeMessageGroup.phoneNumber);
 
   const handleNextPage = useCallback(() => {
     fetchNui<ServerPromiseResp<Message[]>>(MessageEvents.FETCH_MESSAGES, {
@@ -44,7 +44,7 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
     }).then((resp) => {
       if (resp.status !== 'ok') {
         addAlert({
-          message: t('APPS_MESSAGES_FETCHED_MESSAGES_FAILED'),
+          message: t('MESSAGES.FEEDBACK.FETCHED_MESSAGES_FAILED'),
           type: 'error',
         });
 
@@ -65,19 +65,14 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
 
   return (
     <>
-      <Box className={classes.conversationContainer}>
+      <Box display="flex" zIndex={1} flexGrow={1} flexDirection="column">
         <MessageImageModal
           image={referalImage}
           onClose={() => setImageModalOpen(false)}
           isOpen={imageModalOpen}
           messageGroupId={activeMessageGroup.conversation_id}
         />
-        <Box
-          id={CONVERSATION_ELEMENT_ID}
-          height="85%"
-          pt={6}
-          style={{ flex: 1, display: 'flex', overflowY: 'auto' }}
-        >
+        <Box id={CONVERSATION_ELEMENT_ID} style={{ flex: 1, display: 'flex', overflowY: 'auto' }}>
           <Box
             style={{
               display: 'flex',
@@ -90,6 +85,7 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
               id="scrollableDiv"
               style={{
                 overflow: 'auto',
+                maxHeight: 554,
                 display: 'flex',
                 flexDirection: 'column-reverse',
               }}
@@ -103,11 +99,7 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
                 dataLength={messages.length}
               >
                 {messages.map((message) => (
-                  <MessageBubble
-                    onClickDisplay={onClickDisplay}
-                    key={message.id}
-                    message={message}
-                  />
+                  <MessageBubble key={message.id} message={message} />
                 ))}
               </InfiniteScroll>
             </div>
@@ -115,7 +107,7 @@ const Conversation: React.FC<IProps> = ({ activeMessageGroup, messages, onClickD
         </Box>
       </Box>
       <MessageInput
-        messageGroupName={activeMessageGroup.phoneNumber || activeMessageGroup.display}
+        messageGroupName={conversationContact?.display || activeMessageGroup.phoneNumber}
         messageConversationId={activeMessageGroup.conversation_id}
         onAddImageClick={() => setImageModalOpen(true)}
       />

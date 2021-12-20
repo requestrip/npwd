@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Button, Box } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Box, Button } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import {
+  ListingTypeResp,
   MarketplaceDatabaseLimits,
   MarketplaceEvents,
-  MarketplaceListing,
 } from '@typings/marketplace';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { useTranslation } from 'react-i18next';
@@ -59,25 +59,32 @@ export const ListingForm: React.FC = () => {
   const addListing = () => {
     if (!areFieldsFilled) {
       return addAlert({
-        message: t('APPS_MARKETPLACE_REQUIRED_FIELDS'),
+        message: t('MARKETPLACE.FEEDBACK.REQUIRED_FIELDS'),
         type: 'error',
       });
     }
 
-    fetchNui<ServerPromiseResp<MarketplaceListing[]>>(MarketplaceEvents.ADD_LISTING, {
+    fetchNui<ServerPromiseResp<ListingTypeResp>>(MarketplaceEvents.ADD_LISTING, {
       title,
       description,
       url,
     }).then((resp) => {
       if (resp.status !== 'ok') {
+        if (resp.data === ListingTypeResp.DUPLICATE) {
+          return addAlert({
+            message: t('MARKETPLACE.FEEDBACK.DUPLICATE_LISTING'),
+            type: 'error',
+          });
+        }
+
         return addAlert({
-          message: t('APPS_MARKETPLACE_CREATE_LISTING_FAILED'),
+          message: t('MARKETPLACE.FEEDBACK.CREATE_LISTING_FAILED'),
           type: 'error',
         });
       }
 
       addAlert({
-        message: t('APPS_MARKETPLACE_CREATE_LISTING_SUCCESS'),
+        message: t('MARKETPLACE.FEEDBACK.CREATE_LISTING_SUCCESS'),
         type: 'success',
       });
       history.push('/marketplace');
@@ -124,7 +131,7 @@ export const ListingForm: React.FC = () => {
         error={title.length >= MarketplaceDatabaseLimits.title}
         onChange={handleTitleChange}
         label={t('GENERIC.REQUIRED')}
-        placeholder={t('APPS_MARKETPLACE_FORM_TITLE')}
+        placeholder={t('MARKETPLACE.FORM_TITLE')}
         inputProps={{
           className: classes.textFieldInput,
           maxLength: 25,
@@ -146,7 +153,7 @@ export const ListingForm: React.FC = () => {
       </Box>
       <TextField
         className={classes.input}
-        placeholder={t('APPS_MARKETPLACE_FORM_IMAGE')}
+        placeholder={t('MARKETPLACE.FORM_IMAGE')}
         value={url}
         error={url.length >= MarketplaceDatabaseLimits.url}
         onChange={handleUrlChange}
@@ -161,7 +168,7 @@ export const ListingForm: React.FC = () => {
         onChange={handleDescriptionChange}
         label={t('GENERIC.REQUIRED')}
         error={description.length >= MarketplaceDatabaseLimits.description}
-        placeholder={t('APPS_MARKETPLACE_FORM_DESCRIPTION')}
+        placeholder={t('MARKETPLACE.FORM_DESCRIPTION')}
         inputProps={{
           className: classes.multilineFieldInput,
           maxLength: 130,

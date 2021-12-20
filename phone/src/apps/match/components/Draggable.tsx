@@ -5,7 +5,7 @@ import { LikeorDislikeDraggableElement } from '../utils/drag';
 
 const useStyles = makeStyles({
   root: {
-    position: 'relative',
+    position: 'absolute',
     height: '100%',
     width: '100%',
   },
@@ -50,11 +50,11 @@ function Draggable({ id, children, onDrag, onDrop }: IProps) {
   }, [elementRef]); // eslint-disable-line
 
   return (
-    <>
+    <div>
       <div ref={elementRef} key={id} id={id} className={classes.root}>
         {children}
       </div>
-    </>
+    </div>
   );
 }
 

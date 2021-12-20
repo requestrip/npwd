@@ -22,11 +22,6 @@ jobs:
         with:
           node-version: 16.x
           cache: 'yarn'
-      - name: Yarn Cache Call
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
@@ -53,7 +48,7 @@ jobs:
           # Make sure we copy our one lua boy
           mkdir ./temp/npwd/resources/client
           cp ./resources/client/cl_controls.lua ./temp/npwd/resources/client/cl_controls.lua
-          cd ./temp && zip -r npwd-${{ steps.get_tag.outputs.VERSION_TAG }}.zip ./npwd
+          cd ./temp && zip -r ../npwd.zip ./npwd
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
@@ -62,7 +57,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: NPWD Release | ${{ steps.get_tag.outputs.VERSION_TAG }}
           prerelease: false
-          files: npwd-${{ steps.get_tag.outputs.VERSION_TAG }}.zip
+          files: npwd.zip
 
         env:
           CI: false

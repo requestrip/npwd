@@ -2,6 +2,7 @@ import PlayerService from '../players/player.service';
 import { marketplaceLogger } from './marketplace.utils';
 import MarketplaceDB, { _MarketplaceDB } from './marketplace.db';
 import {
+  ListingTypeResp,
   MarketplaceDeleteDTO,
   MarketplaceEvents,
   MarketplaceListing,
@@ -9,7 +10,7 @@ import {
   MarketplaceReportDTO,
 } from '../../../typings/marketplace';
 import { reportListingToDiscord } from '../misc/discord';
-import { PromiseEventResp, PromiseRequest } from '../utils/PromiseNetEvents/promise.types';
+import { PromiseEventResp, PromiseRequest } from '../lib/PromiseNetEvents/promise.types';
 
 class _MarketplaceService {
   private readonly marketplaceDB: _MarketplaceDB;
@@ -21,14 +22,18 @@ class _MarketplaceService {
 
   async handleAddListing(
     reqObj: PromiseRequest<MarketplaceListingBase>,
-    resp: PromiseEventResp<void>,
+    resp: PromiseEventResp<ListingTypeResp>,
   ): Promise<void> {
     marketplaceLogger.debug('Handling add listing, listing:');
     marketplaceLogger.debug(reqObj.data);
 
     const player = PlayerService.getPlayer(reqObj.source);
+    const identifier = player.getIdentifier();
 
     try {
+      const doesListingExist = await this.marketplaceDB.doesListingExist(reqObj.data, identifier);
+      if (doesListingExist) return resp({ status: 'error', data: ListingTypeResp.DUPLICATE });
+
       const listingId = await this.marketplaceDB.addListing(
         player.getIdentifier(),
         player.username,
@@ -86,11 +91,9 @@ class _MarketplaceService {
 
       resp({ status: 'ok' });
 
-      const returnObj: MarketplaceDeleteDTO = {
-        id: reqObj.data.id,
-      };
+      const returnObj = reqObj.data.id;
 
-      emitNet(MarketplaceEvents.BROADCAST_DELETE, -1, returnObj);
+      emitNet(MarketplaceEvents.BROADCAST_DELETE, -1, [returnObj]);
     } catch (e) {
       marketplaceLogger.error(`Error in handleDeleteListing, ${e.message}`);
 
@@ -100,6 +103,10 @@ class _MarketplaceService {
 
   async handleDeleteListingsOnDrop(identifier: string) {
     try {
+      const listingIds = await this.marketplaceDB.getListingIdsByIdentifier(identifier);
+
+      emitNet(MarketplaceEvents.BROADCAST_DELETE, -1, listingIds);
+
       await this.marketplaceDB.deleteListingsOnDrop(identifier);
     } catch (e) {
       marketplaceLogger.error(`Error when deleting listings on player drop, ${e.message}`);
@@ -114,7 +121,7 @@ class _MarketplaceService {
       const rListing = await this.marketplaceDB.getListing(reqObj.data.id);
       const reportExists = await this.marketplaceDB.doesReportExist(
         reqObj.data.id,
-        rListing.number,
+        rListing.username,
       );
 
       const reportingPlayer = GetPlayerName(reqObj.source.toString());
@@ -122,9 +129,10 @@ class _MarketplaceService {
       if (reportExists) {
         marketplaceLogger.error(`This listing has already been reported`);
         resp({ status: 'error', errorMsg: 'REPORT_EXISTS' });
+        return;
       }
 
-      await this.marketplaceDB.reportListing(rListing.id, rListing.name);
+      await this.marketplaceDB.reportListing(rListing);
       await reportListingToDiscord(rListing, reportingPlayer);
     } catch (e) {
       marketplaceLogger.error(`Failed to report listing ${e.message}`, {

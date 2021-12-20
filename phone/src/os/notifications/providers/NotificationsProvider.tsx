@@ -110,7 +110,7 @@ export function NotificationsProvider({ children }) {
     (id: string): INotification | null => {
       return notifications.find((n) => n.id === id) || null;
     },
-    [notifications]
+    [notifications],
   );
 
   const _showAlert = useCallback(
@@ -149,18 +149,13 @@ export function NotificationsProvider({ children }) {
         }, DEFAULT_ALERT_HIDE_TIME + 300);
       });
     },
-    [play]
+    [play],
   );
 
-  const addNotificationAlert = (
-    n: INotification,
-    cb: (n: INotification) => void
-  ) => {
+  const addNotificationAlert = (n: INotification, cb: (n: INotification) => void) => {
     if (n.sound) {
       const { sound, volume } = getSoundSettings('notiSound', settings, n.app);
-      mount(sound, volume, false).then(({ url }) =>
-        setAlerts((curr) => [...curr, [n, cb, url]])
-      );
+      mount(sound, volume, false).then(({ url }) => setAlerts((curr) => [...curr, [n, cb, url]]));
       return;
     }
     setAlerts((curr) => [...curr, [n, cb, undefined]]);
