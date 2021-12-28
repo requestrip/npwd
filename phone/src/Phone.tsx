@@ -17,8 +17,7 @@ import { isSettingsSchemaValid, useSettings } from './apps/settings/hooks/useSet
 import { useCallService } from '@os/call/hooks/useCallService';
 import { useDialService } from './apps/dialer/hooks/useDialService';
 import InjectDebugData from './os/debug/InjectDebugData';
-import { PhoneSnackbar } from './ui/components/PhoneSnackbar';
-import { useCallModal } from './os/call/hooks/useCallModal';
+import { useCallModal } from '@os/call/hooks/useCallModal';
 import WindowSnackbar from './ui/components/WindowSnackbar';
 import { useTranslation } from 'react-i18next';
 import { PhoneEvents } from '@typings/phone';
@@ -31,7 +30,10 @@ import { TopLevelErrorComponent } from '@ui/components/TopLevelErrorComponent';
 import { useConfig } from '@os/phone/hooks/useConfig';
 import { useContactsListener } from './apps/contacts/hooks/useContactsListener';
 import { useNoteListener } from './apps/notes/hooks/useNoteListener';
-import { useNotificationListener } from './os/new-notifications/hooks/useNotificationListener';
+import { useNotificationListener } from '@os/new-notifications/hooks/useNotificationListener';
+import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
+import { useCall } from '@os/call/hooks/useCall';
+import { PhoneSnackbar } from '@os/snackbar/components/PhoneSnackbar';
 
 interface PhoneProps {
   notiRefCB: Dispatch<SetStateAction<HTMLElement>>;

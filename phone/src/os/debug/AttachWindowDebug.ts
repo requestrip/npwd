@@ -1,5 +1,7 @@
-import { PhoneEvents } from '../../../../typings/phone';
-import { QueueNotificationOpts } from '../new-notifications/hooks/useNotifications';
+import { PhoneEvents } from '@typings/phone';
+import { QueueNotificationOptsReadonly } from '@os/new-notifications/hooks/useNotifications';
+import { IAlert } from '@os/snackbar/hooks/useSnackbar';
+import { NotificationEvents } from '@typings/notifications';
 
 function dispatchEvent<T = any>({ method, app, data }: { method: string; app: string; data: T }) {
   setTimeout(() => {
@@ -17,15 +19,31 @@ function dispatchEvent<T = any>({ method, app, data }: { method: string; app: st
 
 const debugObj = {
   testNotification: () => {
-    dispatchEvent<QueueNotificationOpts>({
-      method: PhoneEvents.QUEUE_NOTIFICATION,
+    dispatchEvent<QueueNotificationOptsReadonly>({
+      method: NotificationEvents.QUEUE_NOTIFICATION,
       app: 'PHONE',
       data: {
+        persist: false,
+        uniqId: 'YOU-SUCK',
         appId: 'TWITTER',
         path: '/twitter',
         message: 'Taso just tweeted: You suck bro!',
-        duration: 500000,
+        duration: 10000,
       },
+    });
+  },
+  closeNotification: (id: string) => {
+    dispatchEvent({
+      method: NotificationEvents.SET_NOTIFICATION_INACTIVE,
+      app: 'PHONE',
+      data: id,
+    });
+  },
+  clearAllNotifications: () => {
+    dispatchEvent({
+      method: NotificationEvents.CLEAR_NOTIFICATIONS,
+      data: {},
+      app: 'PHONE',
     });
   },
   mockNuiEvent: dispatchEvent,
