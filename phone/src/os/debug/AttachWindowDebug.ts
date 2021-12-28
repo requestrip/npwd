@@ -1,7 +1,6 @@
 import { PhoneEvents } from '@typings/phone';
-import { QueueNotificationOptsReadonly } from '@os/new-notifications/hooks/useNotifications';
 import { IAlert } from '@os/snackbar/hooks/useSnackbar';
-import { NotificationEvents } from '@typings/notifications';
+import { NotificationEvents, QueueNotificationOptsReadonly } from '@typings/notifications';
 
 function dispatchEvent<T = any>({ method, app, data }: { method: string; app: string; data: T }) {
   setTimeout(() => {
