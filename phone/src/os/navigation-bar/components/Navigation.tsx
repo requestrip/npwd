@@ -6,7 +6,7 @@ import AppsIcon from '@mui/icons-material/Apps';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { usePhone } from '@os/phone/hooks/usePhone';
-import { useNotifications } from '@os/notifications/hooks/useNotifications';
+import { useSetNavbarUncollapsed } from '../../new-notifications/state/notifications.state';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +20,7 @@ export const Navigation = () => {
   const history = useHistory();
   const { isExact } = useRouteMatch('/');
   const { closePhone } = usePhone();
-  const { setBarUncollapsed } = useNotifications();
+  const setBarUncollapsed = useSetNavbarUncollapsed();
   return (
     <BottomNavigation
       className={classes.root}
