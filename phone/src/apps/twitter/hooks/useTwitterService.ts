@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 
 import { useNuiEvent } from 'fivem-nui-react-lib';
-import { APP_TWITTER } from '../utils/constants';
 import { twitterState } from './state';
 import { useTwitterNotifications } from './useTwitterNotifications';
 import { Tweet, TwitterEvents } from '@typings/twitter';
 import { useTwitterActions } from './useTwitterActions';
 import { processBroadcastedTweet, processTweet } from '../utils/tweets';
+import { PhoneApps } from '../../../../../typings/phone';
 
 /**
  * Service to handle all NUI <> client interactions. We take
@@ -45,6 +45,6 @@ export const useTwitterService = () => {
     [addTweet, setNotification, profileContent, profileLoading],
   );
 
-  useNuiEvent(APP_TWITTER, TwitterEvents.FETCH_TWEETS_FILTERED, _setFilteredTweets);
-  useNuiEvent(APP_TWITTER, TwitterEvents.CREATE_TWEET_BROADCAST, handleTweetBroadcast);
+  useNuiEvent(PhoneApps.TWITTER, TwitterEvents.FETCH_TWEETS_FILTERED, _setFilteredTweets);
+  useNuiEvent(PhoneApps.TWITTER, TwitterEvents.CREATE_TWEET_BROADCAST, handleTweetBroadcast);
 };

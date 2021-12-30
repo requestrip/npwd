@@ -37,3 +37,15 @@ export interface FxServerResponse {
   app: string;
   error?: FxServerRespError;
 }
+
+export enum PhoneApps {
+  TWITTER = 'TWITTER',
+  MATCH = 'MATCH',
+  MESSAGES = 'MESSAGES',
+  NOTES = 'NOTES',
+  MARKETPLACE = 'MARKETPLACE',
+  CONTACTS = 'CONTACTS',
+  CAMERA = 'CAMERA',
+  CALL = 'CALL',
+  DIALER = 'DIALER',
+}

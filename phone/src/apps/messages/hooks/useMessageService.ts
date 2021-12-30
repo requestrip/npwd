@@ -6,6 +6,7 @@ import { useMessageNotifications } from './useMessageNotifications';
 import { useLocation } from 'react-router';
 import { usePhoneVisibility } from '@os/phone/hooks/usePhoneVisibility';
 import { useContactActions } from '../../contacts/hooks/useContactActions';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const useMessagesService = () => {
   const { updateMessages, updateConversations } = useMessageActions();
@@ -46,7 +47,11 @@ export const useMessagesService = () => {
     [updateConversations, getDisplayByNumber, getPictureByNumber],
   );
 
-  useNuiEvent('MESSAGES', MessageEvents.CREATE_MESSAGE_BROADCAST, handleMessageBroadcast);
-  useNuiEvent('MESSAGES', MessageEvents.SEND_MESSAGE_SUCCESS, handleUpdateMessages);
-  useNuiEvent('MESSAGES', MessageEvents.CREATE_MESSAGE_CONVERSATION_SUCCESS, handleAddConversation);
+  useNuiEvent(PhoneApps.MESSAGES, MessageEvents.CREATE_MESSAGE_BROADCAST, handleMessageBroadcast);
+  useNuiEvent(PhoneApps.MESSAGES, MessageEvents.SEND_MESSAGE_SUCCESS, handleUpdateMessages);
+  useNuiEvent(
+    PhoneApps.MESSAGES,
+    MessageEvents.CREATE_MESSAGE_CONVERSATION_SUCCESS,
+    handleAddConversation,
+  );
 };

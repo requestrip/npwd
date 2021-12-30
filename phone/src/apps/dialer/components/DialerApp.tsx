@@ -10,9 +10,10 @@ import DialerNavBar from './DialerNavBar';
 import { ContactList } from '../../contacts/components/List/ContactList';
 import { DialerThemeProvider } from '../providers/DialerThemeProvider';
 import { LoadingSpinner } from '@ui/components/LoadingSpinner';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const DialerApp: React.FC = () => {
-  const dialer = useApp('DIALER');
+  const dialer = useApp(PhoneApps.DIALER);
   return (
     <DialerThemeProvider>
       <AppWrapper>

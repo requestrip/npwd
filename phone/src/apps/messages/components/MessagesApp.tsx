@@ -10,9 +10,10 @@ import { MessageModal } from './modal/MessageModal';
 import NewMessageGroupButton from './form/NewMessageGroupButton';
 import { MessagesThemeProvider } from '../providers/MessagesThemeProvider';
 import { LoadingSpinner } from '@ui/components/LoadingSpinner';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const MessagesApp = () => {
-  const messages = useApp('MESSAGES');
+  const messages = useApp(PhoneApps.MESSAGES);
   const history = useHistory();
 
   return (

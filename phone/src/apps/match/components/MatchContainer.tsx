@@ -9,10 +9,11 @@ import { AppWrapper } from '../../../ui/components';
 import { AppTitle } from '../../../ui/components/AppTitle';
 import { useApp } from '../../../os/apps/hooks/useApps';
 import MatchBottomNavigation from './BottomNavigation';
+import { PhoneApps } from '../../../../../typings/phone';
 
 const MatchContainer: React.FC = () => {
   const { profile, noProfileExists, setNoProfileExists } = useProfile();
-  const match = useApp('MATCH');
+  const match = useApp(PhoneApps.MATCH);
   const [activePage, setActivePage] = useState(0);
 
   const handlePageChange = (e, page) => setActivePage(page);

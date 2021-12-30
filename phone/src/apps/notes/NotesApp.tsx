@@ -14,10 +14,11 @@ import { useSetModalVisible, useSetSelectedNote } from './hooks/state';
 import { LoadingSpinner } from '@ui/components/LoadingSpinner';
 import { useQueryParams } from '@common/hooks/useQueryParams';
 import { AddNoteExportData } from '@typings/notes';
+import { PhoneApps } from '../../../../typings/phone';
 
 export const NotesApp: React.FC = () => {
   const classes = useStyles();
-  const notesApp = useApp('NOTES');
+  const notesApp = useApp(PhoneApps.NOTES);
   const setSelectedNote = useSetSelectedNote();
   const setModalVisible = useSetModalVisible();
 

@@ -5,6 +5,7 @@ import { GalleryPhoto, PhotoEvents } from '@typings/photo';
 import { useNuiEvent, useNuiCallback } from 'fivem-nui-react-lib/';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { photoState } from './state';
+import { PhoneApps } from '../../../../../typings/phone';
 
 interface IUseCamera {
   photos: GalleryPhoto[];
@@ -39,14 +40,14 @@ export const useCamera = (): IUseCamera => {
   );
 
   const [_takePhoto] = useNuiCallback<void, GalleryPhoto>(
-    'CAMERA',
+    PhoneApps.CAMERA,
     PhotoEvents.TAKE_PHOTO,
     onPhotoSuccess,
     onPhotoError,
   );
 
-  useNuiEvent('CAMERA', PhotoEvents.UPLOAD_PHOTO, () => setUploading(true));
-  useNuiEvent('CAMERA', PhotoEvents.CAMERA_EXITED, () => setUploading(false));
+  useNuiEvent(PhoneApps.CAMERA, PhotoEvents.UPLOAD_PHOTO, () => setUploading(true));
+  useNuiEvent(PhoneApps.CAMERA, PhotoEvents.CAMERA_EXITED, () => setUploading(false));
 
   const takePhoto = () => {
     // Timeout at 1 minute

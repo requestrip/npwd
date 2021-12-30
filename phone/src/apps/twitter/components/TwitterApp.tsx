@@ -20,6 +20,7 @@ import ProfilePrompt from './profile/ProfilePrompt';
 import InjectDebugData from '../../../os/debug/InjectDebugData';
 import { TwitterThemeProvider } from '../providers/TwitterThemeProvider';
 import { TwitterEvents } from '@typings/twitter';
+import { PhoneApps } from '../../../../../typings/phone';
 
 const useStyles = makeStyles(() => ({
   backgroundModal: {
@@ -76,7 +77,7 @@ export const TwitterApp = () => {
 
 InjectDebugData([
   {
-    app: 'TWITTER',
+    app: PhoneApps.TWITTER,
     method: TwitterEvents.GET_OR_CREATE_PROFILE,
     data: {
       profile_name: 'Angular_Dev',
@@ -87,7 +88,7 @@ InjectDebugData([
     },
   },
   {
-    app: 'TWITTER',
+    app: PhoneApps.TWITTER,
     method: TwitterEvents.FETCH_TWEETS,
     data: [
       {
@@ -148,7 +149,7 @@ InjectDebugData([
 InjectDebugData(
   [
     {
-      app: 'TWITTER',
+      app: PhoneApps.TWITTER,
       method: TwitterEvents.CREATE_TWEET_BROADCAST,
       data: {
         id: 111,
@@ -160,7 +161,7 @@ InjectDebugData(
       },
     },
     {
-      app: 'TWITTER',
+      app: PhoneApps.TWITTER,
       method: TwitterEvents.CREATE_TWEET_BROADCAST,
       data: {
         id: 111,

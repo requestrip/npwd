@@ -8,6 +8,7 @@ import { useNotifications } from '@os/notifications/hooks/useNotifications';
 import { useSettings } from '../../settings/hooks/useSettings';
 import { SETTING_MENTIONS } from '../utils/constants';
 import { twitterState } from './state';
+import { PhoneApps } from '../../../../../typings/phone';
 
 const NOTIFICATION_ID = 'twitter:broadcast';
 
@@ -22,7 +23,7 @@ export const useTwitterNotifications = () => {
 
   const { addNotificationAlert, addNotification, hasNotification, removeId } = useNotifications();
 
-  const { icon, notificationIcon } = useApp('TWITTER');
+  const { icon, notificationIcon } = useApp(PhoneApps.TWITTER);
 
   const [unreadCount, setUnreadCount] = useRecoilState(twitterState.unreadTweetsCount);
   const { state: profileLoading, contents: profile } = useRecoilValueLoadable(twitterState.profile);
@@ -53,7 +54,7 @@ export const useTwitterNotifications = () => {
       return;
 
     const notification = {
-      app: 'TWITTER',
+      app: PhoneApps.TWITTER,
       id: NOTIFICATION_ID,
       sound: true,
       title: t(titleStr, { profile_name }),

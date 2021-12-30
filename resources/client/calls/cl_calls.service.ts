@@ -1,5 +1,6 @@
 import { IAlertProps } from '../../../typings/alerts';
 import { ActiveCall, CallEvents, CallRejectReasons } from '../../../typings/call';
+import { PhoneApps } from '../../../typings/phone';
 
 const exp = global.exports;
 
@@ -12,7 +13,7 @@ export class CallService {
 
   static sendCallAction<T>(method: CallEvents, data: T): void {
     SendNUIMessage({
-      app: 'CALL',
+      app: PhoneApps.CALL,
       method,
       data,
     });
@@ -46,7 +47,7 @@ export class CallService {
     this.openCallModal(true);
 
     SendNUIMessage({
-      app: 'CALL',
+      app: PhoneApps.CALL,
       method: CallEvents.SET_CALLER,
       data: {
         active: true,
@@ -75,7 +76,7 @@ export class CallService {
 
   handleSendAlert(alert: IAlertProps) {
     SendNUIMessage({
-      app: 'DIALER',
+      app: PhoneApps.DIALER,
       method: CallEvents.SEND_ALERT,
       data: alert,
     });

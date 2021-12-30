@@ -2,6 +2,7 @@ import { useNuiEvent } from 'fivem-nui-react-lib';
 import { CallEvents } from '@typings/call';
 import { IAlert, useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { useTranslation } from 'react-i18next';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const useDialService = () => {
   const { addAlert } = useSnackbar();
@@ -14,5 +15,5 @@ export const useDialService = () => {
     });
   };
 
-  useNuiEvent('DIALER', CallEvents.SEND_ALERT, handleAddAlert);
+  useNuiEvent(PhoneApps.DIALER, CallEvents.SEND_ALERT, handleAddAlert);
 };

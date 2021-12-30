@@ -8,9 +8,10 @@ import { ListingFormContainer } from './form/ListingFormContainer';
 import { MarketplaceThemeProvider } from '../providers/MarketplaceThemeProvider';
 import { AppTitle } from '@ui/components/AppTitle';
 import { useApp } from '@os/apps/hooks/useApps';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const MarketplaceApp: React.FC = () => {
-  const marketplaceApp = useApp('MARKETPLACE');
+  const marketplaceApp = useApp(PhoneApps.MARKETPLACE);
 
   return (
     <MarketplaceThemeProvider>

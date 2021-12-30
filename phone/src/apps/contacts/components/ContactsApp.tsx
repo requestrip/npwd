@@ -13,6 +13,7 @@ import { useHistory, useLocation } from 'react-router';
 import { Theme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import { LoadingSpinner } from '@ui/components/LoadingSpinner';
+import { PhoneApps } from '../../../../../typings/phone';
 
 const useStyles = makeStyles((theme: Theme) => ({
   absolute: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const ContactsApp: React.FC = () => {
-  const contacts = useApp('CONTACTS');
+  const contacts = useApp(PhoneApps.CONTACTS);
   const history = useHistory();
   const classes = useStyles();
   const { pathname } = useLocation();

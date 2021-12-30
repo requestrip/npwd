@@ -8,6 +8,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { callerState } from './state';
 import { useCallNotifications } from './useCallNotifications';
 import { useNuiEvent } from 'fivem-nui-react-lib';
+import { PhoneApps } from '../../../../../typings/phone';
 
 // InjectDebugData<CallProps | boolean>([
 //   {
@@ -54,11 +55,11 @@ export const useCallService = () => {
     }
   }, [history, modal, pathname, modalHasBeenOpenedThisCall]);
 
-  useNuiEvent<ActiveCall | null>('CALL', CallEvents.SET_CALLER, (callData) => {
+  useNuiEvent<ActiveCall | null>(PhoneApps.CALL, CallEvents.SET_CALLER, (callData) => {
     setCall(callData);
 
     if (!callData) return clearNotification();
     setNotification(callData);
   });
-  useNuiEvent('CALL', CallEvents.SET_CALL_MODAL, setModal);
+  useNuiEvent(PhoneApps.CALL, CallEvents.SET_CALL_MODAL, setModal);
 };

@@ -2,6 +2,7 @@ import { useNuiEvent } from 'fivem-nui-react-lib';
 import { MarketplaceBroadcastAddDTO, MarketplaceEvents } from '@typings/marketplace';
 import { useMarketplaceActions } from './useMarketplaceActions';
 import { useCallback } from 'react';
+import { PhoneApps } from '../../../../../typings/phone';
 
 export const useMarketplaceService = () => {
   const { addListing, deleteListing } = useMarketplaceActions();
@@ -21,10 +22,14 @@ export const useMarketplaceService = () => {
   );
 
   useNuiEvent<MarketplaceBroadcastAddDTO>(
-    'MARKETPLACE',
+    PhoneApps.MARKETPLACE,
     MarketplaceEvents.BROADCAST_ADD,
     addListingHandler,
   );
 
-  useNuiEvent<number[]>('MARKETPLACE', MarketplaceEvents.BROADCAST_DELETE, deleteListingHandler);
+  useNuiEvent<number[]>(
+    PhoneApps.MARKETPLACE,
+    MarketplaceEvents.BROADCAST_DELETE,
+    deleteListingHandler,
+  );
 };
