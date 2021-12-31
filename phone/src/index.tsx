@@ -65,6 +65,7 @@ ReactDOM.render(
   <HashRouter>
     <NuiProvider resource="npwd">
       <RecoilRootManager>
+        <RecoilPortal />
         <RecoilDebugObserver>
           <PhoneProviders />
         </RecoilDebugObserver>
