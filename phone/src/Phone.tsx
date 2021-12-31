@@ -33,7 +33,6 @@ import { useContactsListener } from './apps/contacts/hooks/useContactsListener';
 import { useNoteListener } from './apps/notes/hooks/useNoteListener';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { PhoneSnackbar } from '@os/snackbar/components/PhoneSnackbar';
-import { useCall } from './os/call/hooks/useCall';
 
 function Phone() {
   const { t, i18n } = useTranslation();
@@ -78,9 +77,6 @@ function Phone() {
   useDialService();
 
   const { modal: callModal } = useCallModal();
-  const { call } = useCall();
-
-  const showNavigation = call?.is_accepted || !callModal;
 
   return (
     <div>
@@ -99,7 +95,7 @@ function Phone() {
             <NotificationAlert />
             <PhoneSnackbar />
           </div>
-          {showNavigation && <Navigation />}
+          <Navigation />
         </PhoneWrapper>
       </TopLevelErrorComponent>
     </div>
