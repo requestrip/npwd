@@ -4,7 +4,6 @@ import './i18n';
 import { Route } from 'react-router-dom';
 import { CallModal } from '@os/call/components/CallModal';
 import { HomeApp } from './apps/home/components/Home';
-import { NotificationBar } from './os/new-notifications/components/NotificationBar';
 import { Navigation } from '@os/navigation-bar/components/Navigation';
 import { useSimcardService } from '@os/simcard/hooks/useSimcardService';
 import { usePhoneService } from '@os/phone/hooks/usePhoneService';
@@ -34,6 +33,7 @@ import { useNotificationListener } from '@os/new-notifications/hooks/useNotifica
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { useCall } from '@os/call/hooks/useCall';
 import { PhoneSnackbar } from '@os/snackbar/components/PhoneSnackbar';
+import { NotificationBar } from '@os/new-notifications/components/NotificationBar';
 
 interface PhoneProps {
   notiRefCB: Dispatch<SetStateAction<HTMLElement>>;
